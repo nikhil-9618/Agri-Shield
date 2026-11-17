@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../core/strings.dart';
 import '../core/theme.dart';
 import '../providers.dart';
+import '../widgets/agrishield_logo.dart';
 import '../widgets/common.dart';
 
 class WelcomeScreen extends ConsumerWidget {
@@ -35,23 +36,8 @@ class WelcomeScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                 children: [
-                  Center(
-                    child: Container(
-                      width: 132,
-                      height: 132,
-                      decoration: BoxDecoration(
-                        color: AgriColors.secondarySoft,
-                        borderRadius: BorderRadius.circular(66),
-                        border: Border.all(color: AgriColors.secondary, width: 4),
-                      ),
-                      child: Image.asset(
-                        'assets/branding/logo.png',
-                        width: 112,
-                        height: 112,
-                        filterQuality: FilterQuality.high,
-                        semanticLabel: 'AgriShield',
-                      ),
-                    ),
+                  const Center(
+                    child: AgriShieldLogo(width: 132, height: 132),
                   ),
                   const SizedBox(height: 18),
                   Row(

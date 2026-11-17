@@ -9,6 +9,7 @@ import '../core/api_client.dart';
 import '../core/strings.dart';
 import '../core/theme.dart';
 import '../providers.dart';
+import '../widgets/agrishield_logo.dart';
 import '../widgets/common.dart';
 
 class AnalysisScreen extends ConsumerStatefulWidget {
@@ -125,7 +126,11 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 26),
+                      const SizedBox(height: 22),
+                      const Center(
+                        child: AgriShieldLogo(width: 86, height: 86),
+                      ),
+                      const SizedBox(height: 18),
                       const Center(
                         child: SizedBox(
                           width: 84,

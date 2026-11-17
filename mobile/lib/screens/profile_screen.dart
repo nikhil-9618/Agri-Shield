@@ -5,6 +5,7 @@ import '../core/strings.dart';
 import '../core/theme.dart';
 import '../models/models.dart';
 import '../providers.dart';
+import '../widgets/agrishield_logo.dart';
 import '../widgets/common.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -74,6 +75,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const Center(
+            child: AgriShieldLogo(width: 108, height: 108, showWordmark: true),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Smart Farming. Healthy Crops.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: AgriColors.inkSoft),
+          ),
+          const SizedBox(height: 18),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),

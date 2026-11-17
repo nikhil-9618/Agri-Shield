@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
-import 'core/local_store.dart';
 import 'providers.dart';
 
 Future<void> main() async {
@@ -22,13 +21,12 @@ Future<void> main() async {
   });
 
   final prefs = await SharedPreferences.getInstance();
-  final settings = LocalStore(prefs).loadSettings();
 
   runApp(
     ProviderScope(
       overrides: [prefsProvider.overrideWithValue(prefs)],
       child: AgriShieldApp(
-        initialRoute: settings.onboarded ? '/home' : '/language',
+        initialRoute: '/splash',
       ),
     ),
   );

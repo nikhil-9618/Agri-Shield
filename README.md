@@ -14,7 +14,7 @@ colour — green, yellow or red — with a plain-language explanation.
 | API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
 | Model | MobileNetV2 transfer learning on real PlantVillage images, 27 classes, 6 crops |
 | Test accuracy | **84.8%** top-1, **97.3%** top-3 on 4,581 held-out images |
-| APK | `artifacts/agrishield-1.1.1-arm-release.apk` (35.1 MB, release-signed, arm64 + 32-bit) |
+| APK | `artifacts/agrishield-1.2.0-universal.apk` (43.7 MB, release-signed, arm64 + armv7 + x86_64) |
 
 ## What a farmer does
 
@@ -64,13 +64,26 @@ Build the signed APK:
 
 ```bash
 ./scripts/build_apk.sh
-# -> artifacts/agrishield-1.1.1-arm-release.apk
+# -> artifacts/agrishield-1.2.0-universal.apk
 ```
 
-## The 12 screens
+### Installing on a phone
 
-Language · Welcome · Home · Camera · Analysis · Result · Voice Assistant ·
-Weather · Alerts · Previous Diagnoses · Help · Profile/Settings.
+The APK requires **Android 7.0 or newer** and is universal: it contains arm64,
+32-bit ARM and x86_64 native libraries. If an older AgriShield is already on the
+phone and was signed with a different key, Android shows "App not installed as
+package appears to be invalid". Uninstall the old copy first, then install this
+APK. The release key is kept out of Git (`key.properties`, `*.jks` ignored).
+
+The shield-and-leaf SVG (`assets/images/agrishield_logo.svg`) is the single brand
+source. It appears on the native launch screen, animated splash, language and
+welcome screens, home header, drawer, profile and About screen; the launcher icon
+uses the icon-only mark with the Deep Navy brand background.
+
+## The screens
+
+Splash · Language · Welcome · Home · Camera · Analysis · Result · Voice Assistant ·
+Weather · Alerts · Previous Diagnoses · Help · About · Profile/Settings.
 
 Offline behaviour is explicit rather than fake: a photo taken without internet
 is stored and queued, saved results stay readable with bundled advisories, the
@@ -121,10 +134,11 @@ against the deployed URL with
 | Backend tests (`pytest`, 10 tests) | **10 passed** |
 | `flutter analyze` | **0 issues** |
 | `flutter test` (translations, offline JSON) | **4 passed** |
-| Release APK build | **succeeded**, 35.1 MB, signed (v2+v3), targetSdk 34, model and logo bundled |
+| Release APK build | **succeeded**, 43.7 MB universal, signed (v2+v3), targetSdk 34 |
+| APK install + launch | **passed** on Android 7.0 (API 24) x86_64 emulator: `adb install` Success, no crash, screens rendered |
 | Model evaluation on held-out test set | **84.78%** top-1, 97.25% top-3 |
 | Render runtime (no TensorFlow, LiteRT) | **10 tests passed**, model loads, ~116 MB RSS |
 | Docker image build / live Render deploy | **not performed** (no Docker daemon or Render account here) |
-| Real phone / emulator interaction | **not performed** (no device in build environment) |
+| Physical phone interaction | **not performed** (no physical device available) |
 
 Details: [docs/TESTING.md](docs/TESTING.md).

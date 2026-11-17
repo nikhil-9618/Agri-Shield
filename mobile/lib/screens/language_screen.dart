@@ -6,6 +6,7 @@ import '../core/strings.dart';
 import '../core/theme.dart';
 import '../models/models.dart';
 import '../providers.dart';
+import '../widgets/agrishield_logo.dart';
 
 class LanguageScreen extends ConsumerWidget {
   const LanguageScreen({super.key});
@@ -36,13 +37,7 @@ class LanguageScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(20, 26, 20, 8),
               child: Row(
                 children: [
-                  Image.asset(
-                    'assets/branding/logo.png',
-                    width: 58,
-                    height: 58,
-                    filterQuality: FilterQuality.high,
-                    semanticLabel: 'AgriShield',
-                  ),
+                  const AgriShieldLogo(width: 58, height: 58),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

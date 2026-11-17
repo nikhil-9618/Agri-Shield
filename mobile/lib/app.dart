@@ -6,6 +6,7 @@ import 'core/strings.dart';
 import 'core/theme.dart';
 import 'models/models.dart';
 import 'providers.dart';
+import 'screens/about_screen.dart';
 import 'screens/alerts_screen.dart';
 import 'screens/analysis_screen.dart';
 import 'screens/camera_screen.dart';
@@ -15,6 +16,7 @@ import 'screens/home_screen.dart';
 import 'screens/language_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/result_screen.dart';
+import 'screens/splash_screen.dart';
 import 'screens/voice_screen.dart';
 import 'screens/weather_screen.dart';
 import 'screens/welcome_screen.dart';
@@ -22,7 +24,9 @@ import 'screens/welcome_screen.dart';
 GoRouter buildRouter(String initialLocation) => GoRouter(
       initialLocation: initialLocation,
       routes: [
+        GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
         GoRoute(path: '/language', builder: (_, _) => const LanguageScreen()),
+        GoRoute(path: '/about', builder: (_, _) => const AboutScreen()),
         GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
         ShellRoute(
           builder: (context, state, child) => AppShell(state: state, child: child),

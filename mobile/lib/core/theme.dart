@@ -3,11 +3,20 @@ import 'package:material_ui/material_ui.dart';
 /// AgriShield design tokens — deep agricultural green, warm white, high contrast.
 /// Everything is sized for outdoor use on cheap phones: large text, large touch
 /// targets (>= 64dp for primary actions), minimal animation.
+/// Brand palette for the AgriShield mark and interface accents.
+class AgriBrand {
+  static const navy = Color(0xFF0B2635);
+  static const green = Color(0xFF087A55);
+  static const fresh = Color(0xFFC8FF72);
+  static const mint = Color(0xFF5CE6B0);
+  static const gold = Color(0xFFF5A623);
+}
+
 class AgriColors {
-  static const primary = Color(0xFF1B5E20); // deep agricultural green
-  static const primaryDark = Color(0xFF0C3D11);
-  static const secondary = Color(0xFF8BC34A); // light green
-  static const secondarySoft = Color(0xFFDCEDC8);
+  static const primary = AgriBrand.green;
+  static const primaryDark = AgriBrand.navy;
+  static const secondary = AgriBrand.mint;
+  static const secondarySoft = Color(0xFFDDF3E7);
   static const background = Color(0xFFFFFDF6); // warm white
   static const surface = Colors.white;
   static const ink = Color(0xFF1B1B1B);

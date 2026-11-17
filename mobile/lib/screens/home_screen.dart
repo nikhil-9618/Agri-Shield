@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../core/strings.dart';
 import '../core/theme.dart';
 import '../providers.dart';
+import '../widgets/agrishield_drawer.dart';
+import '../widgets/agrishield_logo.dart';
 import '../widgets/common.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -15,6 +17,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _syncing = false;
 
   @override
@@ -56,6 +59,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final greetingSpeech = '$greeting ${L.t(lang, 'homeQuestion')}';
 
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: const AgriDrawer(),
       backgroundColor: AgriColors.background,
       body: CustomScrollView(
         slivers: [
@@ -71,6 +76,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               child: Row(
                 children: [
+                  IconButton(
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                    iconSize: 32,
+                    color: Colors.white,
+                    tooltip: 'AgriShield',
+                    icon: const Icon(Icons.menu_rounded),
+                  ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,21 +103,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    width: 52,
-                    height: 52,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(
-                      'assets/branding/logo.png',
-                      fit: BoxFit.contain,
-                      filterQuality: FilterQuality.high,
-                      semanticLabel: 'AgriShield',
-                    ),
-                  ),
+                  const AgriShieldLogo(width: 50, height: 50),
                   const SizedBox(width: 6),
                   SpeakerButton(text: greetingSpeech, language: lang, color: Colors.white),
                 ],

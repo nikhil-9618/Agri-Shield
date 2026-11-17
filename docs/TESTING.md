@@ -79,16 +79,32 @@ The Docker image installs `backend/requirements-render.txt`, where
 # Built build/app/outputs/flutter-apk/app-release.apk (57.6MB)
 ```
 
-`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.0.0,
-minSdk 24, targetSdk 36, and the camera/microphone/location/internet
-permissions. `apksigner verify` confirms the v2 signature with the generated
-release key.
+`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.2.0
+(code 6), minSdk 24, targetSdk 34, native ABIs `arm64-v8a`, `armeabi-v7a` and
+`x86_64`, and the camera/microphone/location/internet permissions.
+`apksigner verify` confirms v2 and v3 signatures with the release key; ZIP
+integrity and 16 KB alignment also pass.
+
+### Emulator install and launch
+
+A clean Android 7.0 (API 24) x86_64 emulator was booted with the SDK emulator
+(software acceleration). `adb install` of the universal 1.2.0 APK returned
+`Success` (exit 0), and the app launched without a native crash. The native
+launch screen, animated splash, language picker, welcome screen, home header,
+app drawer and About screen were captured and visually checked. This test also
+caught an earlier packaging bug: an arm-only build exposed x86_64 TFLite
+libraries but no x86_64 `libflutter.so`, causing a `MissingLibraryException`.
+The final build includes all three ABIs.
 
 ## Not tested (important)
 
-- **No Android device or emulator was available**, so no screen was rendered or
-  tapped. Layouts, TTS voices, camera permission dialogs, STT and GPS were not
-  exercised at runtime.
+- **No physical Android phone was available**, so installation on the farmer's
+  actual handset and a real-device camera/voice run were not performed. The APK
+  was installed and launched on an API 24 emulator (see above).
+- Camera capture, gallery picker, TTS voices, speech-to-text and GPS permission
+  flows were not exercised end-to-end; the emulator has no camera/voice hardware
+  configured. Those paths are covered by code inspection and the backend tests,
+  not a real-device run.
 - No instrumented (`integration_test`) or widget smoke test of the navigation
   flow.
 - No live Open-Meteo call in tests (deliberately mocked); the production request

@@ -28,6 +28,8 @@ android {
         applicationId = "org.agrishield.agrishield"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // Flutter 3.50 supports Android 7.0+ (API 24). The APK is universal
+        // (arm64-v8a, armeabi-v7a, x86_64) and signed with v2+v3.
         minSdk = flutter.minSdkVersion
         // 34 installs on the widest range of OEM package installers; the app
         // does not use any API-35/36-only behaviour.
