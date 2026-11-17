@@ -16,7 +16,7 @@
 | Training time | 391 s (CPU) |
 | Framework | TensorFlow 2.21.0 / NumPy 2.5.5 |
 
-The TFLite file is what the API serves; the Keras file is kept only to compute
+The TFLite file is what the API serves and what the app bundles for on-device inference; the Keras file is kept only to compute
 Grad-CAM heat maps for the winning class.
 
 ## Data

@@ -14,7 +14,7 @@ colour — green, yellow or red — with a plain-language explanation.
 | API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
 | Model | MobileNetV2 transfer learning on real PlantVillage images, 27 classes, 6 crops |
 | Test accuracy | **84.8%** top-1, **97.3%** top-3 on 4,581 held-out images |
-| APK | `artifacts/agrishield-1.0.1-arm-release.apk` (20.7 MB, release-signed, arm64 + 32-bit) |
+| APK | `artifacts/agrishield-1.1.0-arm-release.apk` (34.6 MB, release-signed, arm64 + 32-bit) |
 
 ## What a farmer does
 
@@ -23,8 +23,9 @@ colour — green, yellow or red — with a plain-language explanation.
 3. Taps **Check my crop**, points the camera at a leaf, and takes one photo.
 4. Sees a big green/yellow/red result and presses the speaker to hear what to do.
 
-No form filling, no OTP, no password. An account is created silently on first
-launch and stored only on the phone.
+No form filling, no OTP, no password. The trained model ships inside the app,
+so a photo is diagnosed on the phone even with no internet. An account is
+created silently only for the optional server features (weather, voice).
 
 ## Repository layout
 
@@ -63,7 +64,7 @@ Build the signed APK:
 
 ```bash
 ./scripts/build_apk.sh
-# -> artifacts/agrishield-1.0.1-arm-release.apk
+# -> artifacts/agrishield-1.1.0-arm-release.apk
 ```
 
 ## The 12 screens
@@ -109,8 +110,9 @@ against the deployed URL with
 - The voice assistant is **retrieval-based**, not a free-form chatbot: it matches
   the question to the bundled FAQ/disease advisory and weather data, cites its
   source, and admits when it does not know.
-- Inference runs on the server (TFLite + Keras Grad-CAM), so the phone does not
-  need a large model or a powerful CPU.
+- Inference runs on the phone with the bundled 5 MB TFLite model, so diagnosis
+  works offline. The FastAPI service is the fallback on devices where the model
+  cannot load, and provides weather, voice and cross-device history.
 
 ## Verification status
 
@@ -119,7 +121,7 @@ against the deployed URL with
 | Backend tests (`pytest`, 10 tests) | **10 passed** |
 | `flutter analyze` | **0 issues** |
 | `flutter test` (translations, offline JSON) | **4 passed** |
-| Release APK build | **succeeded**, 20.7 MB, signed (v2+v3), targetSdk 34 |
+| Release APK build | **succeeded**, 34.6 MB, signed (v2+v3), targetSdk 34, model bundled |
 | Model evaluation on held-out test set | **84.78%** top-1, 97.25% top-3 |
 | Render runtime (no TensorFlow, LiteRT) | **10 tests passed**, model loads, ~116 MB RSS |
 | Docker image build / live Render deploy | **not performed** (no Docker daemon or Render account here) |

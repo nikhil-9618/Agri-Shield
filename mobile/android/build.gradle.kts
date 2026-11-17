@@ -15,6 +15,21 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+// tflite_flutter still declares Java 11 while the app and its Kotlin tasks use
+// 17, which AGP 9 rejects as inconsistent. Compile the plugin at the same
+// level; it has no Java-11-only requirements. Register before any subproject is
+// evaluated (evaluationDependsOn below evaluates :app).
+subprojects {
+    afterEvaluate {
+        extensions.findByType(com.android.build.gradle.LibraryExtension::class.java)?.apply {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+    }
+}
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

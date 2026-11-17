@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/api_client.dart';
 import 'core/local_store.dart';
+import 'core/on_device_classifier.dart';
 import 'core/speech.dart';
 import 'models/models.dart';
 
@@ -73,6 +74,7 @@ class AppController extends Notifier<AppState> {
 
   LocalStore get _store => ref.read(storeProvider);
   ApiClient get _api => ref.read(apiProvider);
+  OnDeviceClassifier get _onDevice => ref.read(onDeviceClassifierProvider);
 
   int _newQueueId() => DateTime.now().microsecondsSinceEpoch;
 
@@ -231,11 +233,29 @@ class AppController extends Notifier<AppState> {
     await _store.saveQueue(queue);
   }
 
-  /// Uploads a leaf photo. Returns a diagnosis, or null when it was queued for
-  /// later because there is no connection (the app never fakes a result).
+  /// Diagnoses a leaf photo. The trained model is bundled with the app, so the
+  /// phone answers immediately with no network. The API is the fallback on old
+  /// devices, and the queue is the last resort; the app never fakes a result.
   Future<Diagnosis?> diagnose({required File image, String? language}) async {
     final lang = normalizeLang(language ?? state.language);
     final localPath = await _store.persistImage(image);
+
+    try {
+      final diagnosis = await _onDevice.classify(
+        await image.readAsBytes(),
+        lang,
+        localImagePath: localPath,
+      );
+      _addSaved(diagnosis);
+      return diagnosis;
+    } on OnDeviceException catch (e) {
+      if (e.code == 'invalid_image') {
+        throw ApiException('invalid_image', e.message, 422);
+      }
+      // Model unavailable on this device: try the API below.
+    } catch (_) {
+      // Unexpected on-device failure: try the API below rather than guessing.
+    }
 
     final online = await ensureAccount();
     if (!online) {
@@ -256,13 +276,14 @@ class AppController extends Notifier<AppState> {
     }
   }
 
-  /// Sends queued photos when connectivity returns. Returns how many succeeded.
+  /// Processes photos left over from older builds when the app opens. With the
+  /// bundled model these are diagnosed locally; the API is only a fallback.
   Future<int> syncQueue() async {
     if (state.queue.isEmpty) return 0;
-    final online = await ensureAccount();
-    if (!online) return 0;
 
     var done = 0;
+    var onlineChecked = false;
+    var online = false;
     final remaining = [...state.queue];
     for (final item in [...remaining]) {
       final file = File(item.imagePath);
@@ -270,6 +291,30 @@ class AppController extends Notifier<AppState> {
         remaining.removeWhere((e) => e.id == item.id);
         continue;
       }
+      try {
+        final local = await _onDevice.classify(
+          await file.readAsBytes(),
+          item.language,
+          localImagePath: item.imagePath,
+        );
+        _addSaved(local);
+        remaining.removeWhere((e) => e.id == item.id);
+        done++;
+        continue;
+      } on OnDeviceException catch (e) {
+        if (e.code == 'invalid_image') {
+          remaining.removeWhere((e) => e.id == item.id);
+          continue;
+        }
+      } catch (_) {
+        // Fall through to the API.
+      }
+
+      if (!onlineChecked) {
+        onlineChecked = true;
+        online = await ensureAccount();
+      }
+      if (!online) break;
       try {
         final diagnosis =
             await _api.predict(await file.readAsBytes(), file.path.split('/').last, item.language);
@@ -336,6 +381,9 @@ void registerAssetLoader(Future<String?> Function(String) loader) {
 }
 
 final appProvider = NotifierProvider<AppController, AppState>(AppController.new);
+
+final onDeviceClassifierProvider =
+    Provider<OnDeviceClassifier>((ref) => OnDeviceClassifier());
 
 final apiProvider = Provider<ApiClient>((ref) {
   final settings = ref.watch(appProvider.select((s) => s.settings));

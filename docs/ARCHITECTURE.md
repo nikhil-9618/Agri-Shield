@@ -45,16 +45,24 @@
    then returns the full result — including the three top predictions.
 6. The app saves the response locally *with the photo path*, shows the
    green/yellow/red screen and automatically reads the result aloud.
-7. If the network is down, the photo is queued instead. `syncQueue` uploads it
-   on the next launch/home visit. The app never shows an invented result.
+7. If the bundled model cannot load on an old device, the photo goes to the API
+   instead. If both are unavailable the photo is queued; the app never shows an
+   invented result.
 
-## Why server-side inference
+## Inference strategy
 
-A 5 MB float16 model would fit on a phone, but Grad-CAM plus the localised
-advisory snapshot and the "unclear" decision logic stay consistent across
-devices and can be fixed without shipping an app update. The phone only needs
-to send one JPEG. The trade-off — no detection without a connection — is handled
-by the queue rather than hidden.
+The same 5 MB float16 MobileNetV2 model is bundled in the APK and run by
+`tflite_flutter` on the phone. Diagnosis therefore needs no connection, no
+account and no server round trip. The on-device path uses the same 128×128
+[-1, 1] preprocessing and the same 0.55/0.60 confidence thresholds as the API.
+
+The FastAPI service remains the fallback for devices where the model cannot
+load, and it serves Grad-CAM, weather, the voice assistant and cross-device
+history. Keeping the thresholds and class metadata in one model artifact means
+the two paths cannot drift apart.
+
+Grad-CAM needs Keras and is server-only; on-device results show the photo and
+top-3 predictions without a heat map.
 
 ## Offline strategy
 
@@ -63,7 +71,7 @@ by the queue rather than hidden.
 | Language, profile, token | SharedPreferences | read/write locally |
 | Saved diagnoses | SharedPreferences (200 newest) | readable, with photo |
 | Advisory text | bundled JSON assets | readable for any disease |
-| Pending photos | app documents + queue | synced later |
+| Pending photos | app documents + queue | diagnosed locally by `syncQueue` |
 | Weather | last snapshot in prefs | shown with fetch time |
 | Voice answers | none | explicit "cannot reach server" message |
 
