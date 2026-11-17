@@ -1,0 +1,8 @@
+{
+  "tomato": {"icon": "tomato", "names": {"te": "టమాటా", "hi": "टमाटर", "en": "Tomato", "ta": "தக்காளி", "kn": "ಟೊಮೆಟೊ"}},
+  "potato": {"icon": "potato", "names": {"te": "బంగాళదుంప", "hi": "आलू", "en": "Potato", "ta": "உருளைக்கிழங்கு", "kn": "ಆಲೂಗಡ್ಡೆ"}},
+  "pepper": {"icon": "pepper", "names": {"te": "మిరప", "hi": "शिमला मिर्च", "en": "Pepper", "ta": "குடைமிளகாய்", "kn": "ಮೆಣಸಿನಕಾಯಿ"}},
+  "corn":  {"icon": "corn", "names": {"te": "మొక్కజొన్న", "hi": "मक्का", "en": "Corn", "ta": "மக்காச்சோளம்", "kn": "ಮಕ್ಕಾಜೋಳ"}},
+  "apple": {"icon": "apple", "names": {"te": "యాపిల్", "hi": "सेब", "en": "Apple", "ta": "ஆப்பிள்", "kn": "ಸೇಬು"}},
+  "grape": {"icon": "grape", "names": {"te": "ద్రాక్ష", "hi": "अंगूर", "en": "Grape", "ta": "திராட்சை", "kn": "ದ್ರಾಕ್ಷಿ"}}
+}

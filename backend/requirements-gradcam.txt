@@ -1,0 +1,7 @@
+# Full runtime, including Grad-CAM explanations.
+# Needs roughly 1.5 GB of RAM because TensorFlow and the Keras model are loaded
+# for the heat map. Use this instead of requirements-render.txt on a 2 GB+
+# instance, and set GRADCAM_ENABLED=true.
+-r requirements-render.txt
+tensorflow-cpu==2.21.0
+opencv-python-headless>=4.9

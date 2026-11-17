@@ -1,0 +1,218 @@
+[
+  {
+    "index": 0,
+    "label": "Apple___Apple_scab",
+    "key": "apple_apple_scab",
+    "crop": "apple",
+    "disease": "apple_scab",
+    "is_healthy": false
+  },
+  {
+    "index": 1,
+    "label": "Apple___Black_rot",
+    "key": "apple_black_rot",
+    "crop": "apple",
+    "disease": "black_rot",
+    "is_healthy": false
+  },
+  {
+    "index": 2,
+    "label": "Apple___Cedar_apple_rust",
+    "key": "apple_cedar_apple_rust",
+    "crop": "apple",
+    "disease": "cedar_apple_rust",
+    "is_healthy": false
+  },
+  {
+    "index": 3,
+    "label": "Apple___healthy",
+    "key": "apple_healthy",
+    "crop": "apple",
+    "disease": "healthy",
+    "is_healthy": true
+  },
+  {
+    "index": 4,
+    "label": "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+    "key": "corn_maize_cercospora_leaf_spot_gray_leaf_spot",
+    "crop": "corn",
+    "disease": "cercospora_leaf_spot_gray_leaf_spot",
+    "is_healthy": false
+  },
+  {
+    "index": 5,
+    "label": "Corn_(maize)___Common_rust_",
+    "key": "corn_maize_common_rust",
+    "crop": "corn",
+    "disease": "common_rust",
+    "is_healthy": false
+  },
+  {
+    "index": 6,
+    "label": "Corn_(maize)___Northern_Leaf_Blight",
+    "key": "corn_maize_northern_leaf_blight",
+    "crop": "corn",
+    "disease": "northern_leaf_blight",
+    "is_healthy": false
+  },
+  {
+    "index": 7,
+    "label": "Corn_(maize)___healthy",
+    "key": "corn_maize_healthy",
+    "crop": "corn",
+    "disease": "healthy",
+    "is_healthy": true
+  },
+  {
+    "index": 8,
+    "label": "Grape___Black_rot",
+    "key": "grape_black_rot",
+    "crop": "grape",
+    "disease": "black_rot",
+    "is_healthy": false
+  },
+  {
+    "index": 9,
+    "label": "Grape___Esca_(Black_Measles)",
+    "key": "grape_esca_black_measles",
+    "crop": "grape",
+    "disease": "esca_black_measles",
+    "is_healthy": false
+  },
+  {
+    "index": 10,
+    "label": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "key": "grape_leaf_blight_isariopsis_leaf_spot",
+    "crop": "grape",
+    "disease": "leaf_blight_isariopsis_leaf_spot",
+    "is_healthy": false
+  },
+  {
+    "index": 11,
+    "label": "Grape___healthy",
+    "key": "grape_healthy",
+    "crop": "grape",
+    "disease": "healthy",
+    "is_healthy": true
+  },
+  {
+    "index": 12,
+    "label": "Pepper,_bell___Bacterial_spot",
+    "key": "pepper_bell_bacterial_spot",
+    "crop": "pepper",
+    "disease": "bacterial_spot",
+    "is_healthy": false
+  },
+  {
+    "index": 13,
+    "label": "Pepper,_bell___healthy",
+    "key": "pepper_bell_healthy",
+    "crop": "pepper",
+    "disease": "healthy",
+    "is_healthy": true
+  },
+  {
+    "index": 14,
+    "label": "Potato___Early_blight",
+    "key": "potato_early_blight",
+    "crop": "potato",
+    "disease": "early_blight",
+    "is_healthy": false
+  },
+  {
+    "index": 15,
+    "label": "Potato___Late_blight",
+    "key": "potato_late_blight",
+    "crop": "potato",
+    "disease": "late_blight",
+    "is_healthy": false
+  },
+  {
+    "index": 16,
+    "label": "Potato___healthy",
+    "key": "potato_healthy",
+    "crop": "potato",
+    "disease": "healthy",
+    "is_healthy": true
+  },
+  {
+    "index": 17,
+    "label": "Tomato___Bacterial_spot",
+    "key": "tomato_bacterial_spot",
+    "crop": "tomato",
+    "disease": "bacterial_spot",
+    "is_healthy": false
+  },
+  {
+    "index": 18,
+    "label": "Tomato___Early_blight",
+    "key": "tomato_early_blight",
+    "crop": "tomato",
+    "disease": "early_blight",
+    "is_healthy": false
+  },
+  {
+    "index": 19,
+    "label": "Tomato___Late_blight",
+    "key": "tomato_late_blight",
+    "crop": "tomato",
+    "disease": "late_blight",
+    "is_healthy": false
+  },
+  {
+    "index": 20,
+    "label": "Tomato___Leaf_Mold",
+    "key": "tomato_leaf_mold",
+    "crop": "tomato",
+    "disease": "leaf_mold",
+    "is_healthy": false
+  },
+  {
+    "index": 21,
+    "label": "Tomato___Septoria_leaf_spot",
+    "key": "tomato_septoria_leaf_spot",
+    "crop": "tomato",
+    "disease": "septoria_leaf_spot",
+    "is_healthy": false
+  },
+  {
+    "index": 22,
+    "label": "Tomato___Spider_mites Two-spotted_spider_mite",
+    "key": "tomato_spider_mites_two_spotted_spider_mite",
+    "crop": "tomato",
+    "disease": "spider_mites_two_spotted_spider_mite",
+    "is_healthy": false
+  },
+  {
+    "index": 23,
+    "label": "Tomato___Target_Spot",
+    "key": "tomato_target_spot",
+    "crop": "tomato",
+    "disease": "target_spot",
+    "is_healthy": false
+  },
+  {
+    "index": 24,
+    "label": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "key": "tomato_tomato_yellow_leaf_curl_virus",
+    "crop": "tomato",
+    "disease": "tomato_yellow_leaf_curl_virus",
+    "is_healthy": false
+  },
+  {
+    "index": 25,
+    "label": "Tomato___Tomato_mosaic_virus",
+    "key": "tomato_tomato_mosaic_virus",
+    "crop": "tomato",
+    "disease": "tomato_mosaic_virus",
+    "is_healthy": false
+  },
+  {
+    "index": 26,
+    "label": "Tomato___healthy",
+    "key": "tomato_healthy",
+    "crop": "tomato",
+    "disease": "healthy",
+    "is_healthy": true
+  }
+]

@@ -1,0 +1,21 @@
+# Keep the image build context small and free of secrets/large artifacts.
+.git
+.gitignore
+.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+mobile
+artifacts
+dataset
+docs
+scripts
+advisory/README.md
+ml/artifacts/*.keras
+ml/artifacts/best_checkpoint.keras
+ml/artifacts/evaluation
+backend/.env
+backend/uploads
+backend/*.db
+backend/.pytest_cache
+README.md

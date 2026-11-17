@@ -1,0 +1,669 @@
+{
+  "model": "MobileNetV2 (ImageNet) + GAP/Dense head, transfer learning",
+  "input_size": 128,
+  "classes": [
+    {
+      "index": 0,
+      "label": "Apple___Apple_scab",
+      "key": "apple_apple_scab",
+      "crop": "apple",
+      "disease": "apple_scab",
+      "is_healthy": false
+    },
+    {
+      "index": 1,
+      "label": "Apple___Black_rot",
+      "key": "apple_black_rot",
+      "crop": "apple",
+      "disease": "black_rot",
+      "is_healthy": false
+    },
+    {
+      "index": 2,
+      "label": "Apple___Cedar_apple_rust",
+      "key": "apple_cedar_apple_rust",
+      "crop": "apple",
+      "disease": "cedar_apple_rust",
+      "is_healthy": false
+    },
+    {
+      "index": 3,
+      "label": "Apple___healthy",
+      "key": "apple_healthy",
+      "crop": "apple",
+      "disease": "healthy",
+      "is_healthy": true
+    },
+    {
+      "index": 4,
+      "label": "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+      "key": "corn_maize_cercospora_leaf_spot_gray_leaf_spot",
+      "crop": "corn",
+      "disease": "cercospora_leaf_spot_gray_leaf_spot",
+      "is_healthy": false
+    },
+    {
+      "index": 5,
+      "label": "Corn_(maize)___Common_rust_",
+      "key": "corn_maize_common_rust",
+      "crop": "corn",
+      "disease": "common_rust",
+      "is_healthy": false
+    },
+    {
+      "index": 6,
+      "label": "Corn_(maize)___Northern_Leaf_Blight",
+      "key": "corn_maize_northern_leaf_blight",
+      "crop": "corn",
+      "disease": "northern_leaf_blight",
+      "is_healthy": false
+    },
+    {
+      "index": 7,
+      "label": "Corn_(maize)___healthy",
+      "key": "corn_maize_healthy",
+      "crop": "corn",
+      "disease": "healthy",
+      "is_healthy": true
+    },
+    {
+      "index": 8,
+      "label": "Grape___Black_rot",
+      "key": "grape_black_rot",
+      "crop": "grape",
+      "disease": "black_rot",
+      "is_healthy": false
+    },
+    {
+      "index": 9,
+      "label": "Grape___Esca_(Black_Measles)",
+      "key": "grape_esca_black_measles",
+      "crop": "grape",
+      "disease": "esca_black_measles",
+      "is_healthy": false
+    },
+    {
+      "index": 10,
+      "label": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+      "key": "grape_leaf_blight_isariopsis_leaf_spot",
+      "crop": "grape",
+      "disease": "leaf_blight_isariopsis_leaf_spot",
+      "is_healthy": false
+    },
+    {
+      "index": 11,
+      "label": "Grape___healthy",
+      "key": "grape_healthy",
+      "crop": "grape",
+      "disease": "healthy",
+      "is_healthy": true
+    },
+    {
+      "index": 12,
+      "label": "Pepper,_bell___Bacterial_spot",
+      "key": "pepper_bell_bacterial_spot",
+      "crop": "pepper",
+      "disease": "bacterial_spot",
+      "is_healthy": false
+    },
+    {
+      "index": 13,
+      "label": "Pepper,_bell___healthy",
+      "key": "pepper_bell_healthy",
+      "crop": "pepper",
+      "disease": "healthy",
+      "is_healthy": true
+    },
+    {
+      "index": 14,
+      "label": "Potato___Early_blight",
+      "key": "potato_early_blight",
+      "crop": "potato",
+      "disease": "early_blight",
+      "is_healthy": false
+    },
+    {
+      "index": 15,
+      "label": "Potato___Late_blight",
+      "key": "potato_late_blight",
+      "crop": "potato",
+      "disease": "late_blight",
+      "is_healthy": false
+    },
+    {
+      "index": 16,
+      "label": "Potato___healthy",
+      "key": "potato_healthy",
+      "crop": "potato",
+      "disease": "healthy",
+      "is_healthy": true
+    },
+    {
+      "index": 17,
+      "label": "Tomato___Bacterial_spot",
+      "key": "tomato_bacterial_spot",
+      "crop": "tomato",
+      "disease": "bacterial_spot",
+      "is_healthy": false
+    },
+    {
+      "index": 18,
+      "label": "Tomato___Early_blight",
+      "key": "tomato_early_blight",
+      "crop": "tomato",
+      "disease": "early_blight",
+      "is_healthy": false
+    },
+    {
+      "index": 19,
+      "label": "Tomato___Late_blight",
+      "key": "tomato_late_blight",
+      "crop": "tomato",
+      "disease": "late_blight",
+      "is_healthy": false
+    },
+    {
+      "index": 20,
+      "label": "Tomato___Leaf_Mold",
+      "key": "tomato_leaf_mold",
+      "crop": "tomato",
+      "disease": "leaf_mold",
+      "is_healthy": false
+    },
+    {
+      "index": 21,
+      "label": "Tomato___Septoria_leaf_spot",
+      "key": "tomato_septoria_leaf_spot",
+      "crop": "tomato",
+      "disease": "septoria_leaf_spot",
+      "is_healthy": false
+    },
+    {
+      "index": 22,
+      "label": "Tomato___Spider_mites Two-spotted_spider_mite",
+      "key": "tomato_spider_mites_two_spotted_spider_mite",
+      "crop": "tomato",
+      "disease": "spider_mites_two_spotted_spider_mite",
+      "is_healthy": false
+    },
+    {
+      "index": 23,
+      "label": "Tomato___Target_Spot",
+      "key": "tomato_target_spot",
+      "crop": "tomato",
+      "disease": "target_spot",
+      "is_healthy": false
+    },
+    {
+      "index": 24,
+      "label": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+      "key": "tomato_tomato_yellow_leaf_curl_virus",
+      "crop": "tomato",
+      "disease": "tomato_yellow_leaf_curl_virus",
+      "is_healthy": false
+    },
+    {
+      "index": 25,
+      "label": "Tomato___Tomato_mosaic_virus",
+      "key": "tomato_tomato_mosaic_virus",
+      "crop": "tomato",
+      "disease": "tomato_mosaic_virus",
+      "is_healthy": false
+    },
+    {
+      "index": 26,
+      "label": "Tomato___healthy",
+      "key": "tomato_healthy",
+      "crop": "tomato",
+      "disease": "healthy",
+      "is_healthy": true
+    }
+  ],
+  "dataset": {
+    "dataset": "PlantVillage (Hughes & Salath\u00e9 2015)",
+    "source_mirror": "BrandonFors/Plant-Diseases-PlantVillage-Dataset",
+    "license_note": "PlantVillage is published for research use; cite the original paper.",
+    "image_size": 192,
+    "seed": 1337,
+    "classes": [
+      {
+        "label": "Apple___Apple_scab",
+        "key": "apple_apple_scab",
+        "crop": "apple",
+        "disease": "apple_scab",
+        "is_healthy": false,
+        "directory": "Apple_Apple_scab",
+        "train": 400,
+        "val": 100,
+        "test": 126
+      },
+      {
+        "label": "Apple___Black_rot",
+        "key": "apple_black_rot",
+        "crop": "apple",
+        "disease": "black_rot",
+        "is_healthy": false,
+        "directory": "Apple_Black_rot",
+        "train": 397,
+        "val": 100,
+        "test": 124
+      },
+      {
+        "label": "Apple___Cedar_apple_rust",
+        "key": "apple_cedar_apple_rust",
+        "crop": "apple",
+        "disease": "cedar_apple_rust",
+        "is_healthy": false,
+        "directory": "Apple_Cedar_apple_rust",
+        "train": 120,
+        "val": 100,
+        "test": 55
+      },
+      {
+        "label": "Apple___healthy",
+        "key": "apple_healthy",
+        "crop": "apple",
+        "disease": "healthy",
+        "is_healthy": true,
+        "directory": "Apple_healthy",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+        "key": "corn_maize_cercospora_leaf_spot_gray_leaf_spot",
+        "crop": "corn",
+        "disease": "cercospora_leaf_spot_gray_leaf_spot",
+        "is_healthy": false,
+        "directory": "Corn_maize_Cercospora_leaf_spot_Gray_leaf_spot",
+        "train": 311,
+        "val": 100,
+        "test": 102
+      },
+      {
+        "label": "Corn_(maize)___Common_rust_",
+        "key": "corn_maize_common_rust",
+        "crop": "corn",
+        "disease": "common_rust",
+        "is_healthy": false,
+        "directory": "Corn_maize_Common_rust",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Corn_(maize)___Northern_Leaf_Blight",
+        "key": "corn_maize_northern_leaf_blight",
+        "crop": "corn",
+        "disease": "northern_leaf_blight",
+        "is_healthy": false,
+        "directory": "Corn_maize_Northern_Leaf_Blight",
+        "train": 400,
+        "val": 100,
+        "test": 197
+      },
+      {
+        "label": "Corn_(maize)___healthy",
+        "key": "corn_maize_healthy",
+        "crop": "corn",
+        "disease": "healthy",
+        "is_healthy": true,
+        "directory": "Corn_maize_healthy",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Grape___Black_rot",
+        "key": "grape_black_rot",
+        "crop": "grape",
+        "disease": "black_rot",
+        "is_healthy": false,
+        "directory": "Grape_Black_rot",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Grape___Esca_(Black_Measles)",
+        "key": "grape_esca_black_measles",
+        "crop": "grape",
+        "disease": "esca_black_measles",
+        "is_healthy": false,
+        "directory": "Grape_Esca_Black_Measles",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+        "key": "grape_leaf_blight_isariopsis_leaf_spot",
+        "crop": "grape",
+        "disease": "leaf_blight_isariopsis_leaf_spot",
+        "is_healthy": false,
+        "directory": "Grape_Leaf_blight_Isariopsis_Leaf_Spot",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Grape___healthy",
+        "key": "grape_healthy",
+        "crop": "grape",
+        "disease": "healthy",
+        "is_healthy": true,
+        "directory": "Grape_healthy",
+        "train": 239,
+        "val": 100,
+        "test": 84
+      },
+      {
+        "label": "Pepper,_bell___Bacterial_spot",
+        "key": "pepper_bell_bacterial_spot",
+        "crop": "pepper",
+        "disease": "bacterial_spot",
+        "is_healthy": false,
+        "directory": "Pepper_bell_Bacterial_spot",
+        "train": 400,
+        "val": 100,
+        "test": 199
+      },
+      {
+        "label": "Pepper,_bell___healthy",
+        "key": "pepper_bell_healthy",
+        "crop": "pepper",
+        "disease": "healthy",
+        "is_healthy": true,
+        "directory": "Pepper_bell_healthy",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Potato___Early_blight",
+        "key": "potato_early_blight",
+        "crop": "potato",
+        "disease": "early_blight",
+        "is_healthy": false,
+        "directory": "Potato_Early_blight",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Potato___Late_blight",
+        "key": "potato_late_blight",
+        "crop": "potato",
+        "disease": "late_blight",
+        "is_healthy": false,
+        "directory": "Potato_Late_blight",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Potato___healthy",
+        "key": "potato_healthy",
+        "crop": "potato",
+        "disease": "healthy",
+        "is_healthy": true,
+        "directory": "Potato_healthy",
+        "train": 22,
+        "val": 100,
+        "test": 30
+      },
+      {
+        "label": "Tomato___Bacterial_spot",
+        "key": "tomato_bacterial_spot",
+        "crop": "tomato",
+        "disease": "bacterial_spot",
+        "is_healthy": false,
+        "directory": "Tomato_Bacterial_spot",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Tomato___Early_blight",
+        "key": "tomato_early_blight",
+        "crop": "tomato",
+        "disease": "early_blight",
+        "is_healthy": false,
+        "directory": "Tomato_Early_blight",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Tomato___Late_blight",
+        "key": "tomato_late_blight",
+        "crop": "tomato",
+        "disease": "late_blight",
+        "is_healthy": false,
+        "directory": "Tomato_Late_blight",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Tomato___Leaf_Mold",
+        "key": "tomato_leaf_mold",
+        "crop": "tomato",
+        "disease": "leaf_mold",
+        "is_healthy": false,
+        "directory": "Tomato_Leaf_Mold",
+        "train": 400,
+        "val": 100,
+        "test": 190
+      },
+      {
+        "label": "Tomato___Septoria_leaf_spot",
+        "key": "tomato_septoria_leaf_spot",
+        "crop": "tomato",
+        "disease": "septoria_leaf_spot",
+        "is_healthy": false,
+        "directory": "Tomato_Septoria_leaf_spot",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Tomato___Spider_mites Two-spotted_spider_mite",
+        "key": "tomato_spider_mites_two_spotted_spider_mite",
+        "crop": "tomato",
+        "disease": "spider_mites_two_spotted_spider_mite",
+        "is_healthy": false,
+        "directory": "Tomato_Spider_mites_Two_spotted_spider_mite",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Tomato___Target_Spot",
+        "key": "tomato_target_spot",
+        "crop": "tomato",
+        "disease": "target_spot",
+        "is_healthy": false,
+        "directory": "Tomato_Target_Spot",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+        "key": "tomato_tomato_yellow_leaf_curl_virus",
+        "crop": "tomato",
+        "disease": "tomato_yellow_leaf_curl_virus",
+        "is_healthy": false,
+        "directory": "Tomato_Tomato_Yellow_Leaf_Curl_Virus",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      },
+      {
+        "label": "Tomato___Tomato_mosaic_virus",
+        "key": "tomato_tomato_mosaic_virus",
+        "crop": "tomato",
+        "disease": "tomato_mosaic_virus",
+        "is_healthy": false,
+        "directory": "Tomato_Tomato_mosaic_virus",
+        "train": 199,
+        "val": 100,
+        "test": 74
+      },
+      {
+        "label": "Tomato___healthy",
+        "key": "tomato_healthy",
+        "crop": "tomato",
+        "disease": "healthy",
+        "is_healthy": true,
+        "directory": "Tomato_healthy",
+        "train": 400,
+        "val": 100,
+        "test": 200
+      }
+    ],
+    "totals": {
+      "train": 9688,
+      "val": 2700,
+      "test": 4581
+    }
+  },
+  "config": {
+    "data": "/tmp/agrishield_dataset",
+    "out": "ml/artifacts",
+    "img_size": 128,
+    "batch": 32,
+    "head_epochs": 5,
+    "finetune_epochs": 3,
+    "finetune_layers": 24,
+    "head_lr": 0.001,
+    "finetune_lr": 0.0001,
+    "dropout": 0.25,
+    "l2": 0.0001
+  },
+  "history": {
+    "accuracy": [
+      0.6163294911384583,
+      0.7600123882293701,
+      0.7933526039123535,
+      0.8089389204978943,
+      0.816886842250824,
+      0.808113157749176,
+      0.8698389530181885,
+      0.8886250853538513
+    ],
+    "loss": [
+      1.3169000148773193,
+      0.7716893553733826,
+      0.6719163060188293,
+      0.631108283996582,
+      0.5989194512367249,
+      0.6537706255912781,
+      0.4392370581626892,
+      0.3810672163963318
+    ],
+    "precision": [
+      0.8005441427230835,
+      0.8417601585388184,
+      0.8560978770256042,
+      0.866382896900177,
+      0.8688467144966125,
+      0.8637264966964722,
+      0.8969895839691162,
+      0.9127698540687561
+    ],
+    "recall": [
+      0.48596200346946716,
+      0.689099907875061,
+      0.736890971660614,
+      0.7562964558601379,
+      0.7706440687179565,
+      0.7641412019729614,
+      0.8457885980606079,
+      0.8683938980102539
+    ],
+    "top3_accuracy": [
+      0.823596179485321,
+      0.9324938058853149,
+      0.9491122961044312,
+      0.9568538665771484,
+      0.9594343304634094,
+      0.9518992304801941,
+      0.9802848696708679,
+      0.9825557470321655
+    ],
+    "val_accuracy": [
+      0.7418518662452698,
+      0.7562962770462036,
+      0.770370364189148,
+      0.8174074292182922,
+      0.7955555319786072,
+      0.7740740776062012,
+      0.8062962889671326,
+      0.8633333444595337
+    ],
+    "val_loss": [
+      0.8122485280036926,
+      0.7615901827812195,
+      0.7151831984519958,
+      0.6047770380973816,
+      0.6409789323806763,
+      0.7904855012893677,
+      0.6767283082008362,
+      0.4789062440395355
+    ],
+    "val_precision": [
+      0.8459330201148987,
+      0.828953206539154,
+      0.8447151184082031,
+      0.8702929019927979,
+      0.8538331985473633,
+      0.8062077164649963,
+      0.827174723148346,
+      0.8825567960739136
+    ],
+    "val_recall": [
+      0.6548148393630981,
+      0.6892592310905457,
+      0.7192592620849609,
+      0.770370364189148,
+      0.7507407665252686,
+      0.7503703832626343,
+      0.7959259152412415,
+      0.8488888740539551
+    ],
+    "val_top3_accuracy": [
+      0.9188888669013977,
+      0.9385185241699219,
+      0.9385185241699219,
+      0.9585185050964355,
+      0.9496296048164368,
+      0.9444444179534912,
+      0.9662963151931763,
+      0.9781481623649597
+    ],
+    "learning_rate": [
+      0.0010000000474974513,
+      0.0010000000474974513,
+      0.0010000000474974513,
+      0.0010000000474974513,
+      0.0010000000474974513,
+      9.999999747378752e-05,
+      9.999999747378752e-05,
+      9.999999747378752e-05
+    ]
+  },
+  "final_val_metrics": {
+    "accuracy": 0.8633333444595337,
+    "loss": 0.4789062440395355,
+    "precision": 0.8825567960739136,
+    "recall": 0.8488888740539551,
+    "top3_accuracy": 0.9781481623649597
+  },
+  "train_seconds": 391.5,
+  "tensorflow": "2.21.0",
+  "numpy": "2.5.5",
+  "timestamp_utc": "2026-11-16T08:56:34Z"
+}

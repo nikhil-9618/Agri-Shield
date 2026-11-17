@@ -1,0 +1,55 @@
+# Render Blueprint for AgriShield.
+#
+# Dashboard → New → Blueprint → pick this repository → Apply.
+# Render creates the Docker web service plus a Postgres database and wires
+# DATABASE_URL into the service. See documentation/RENDER_DEPLOY.md.
+#
+# Free-plan caveats (documented in RENDER_DEPLOY.md): the web service sleeps
+# after 15 minutes and free Postgres expires after 30 days. Move both to a paid
+# plan for a real pilot.
+services:
+  - type: web
+    name: agrishield-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agrishield-db
+          property: connectionString
+      # The app is not a browser client, so CORS is only relevant to the docs.
+      - key: CORS_ORIGINS
+        value: "*"
+      # Small image: predictions without the Grad-CAM heat map.
+      - key: GRADCAM_ENABLED
+        value: "false"
+      # Render's filesystem is ephemeral. Detection rows live in Postgres, but
+      # uploaded JPEGs disappear on redeploy unless a persistent disk is added.
+      - key: UPLOAD_DIR
+        value: /tmp/agrishield-uploads
+      - key: MODEL_PATH
+        value: ml/artifacts/agrishield_model.tflite
+      - key: CLASS_NAMES_PATH
+        value: ml/artifacts/class_names.json
+      - key: ADVISORY_DIR
+        value: advisory
+      - key: MAX_UPLOAD_MB
+        value: "8"
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "60"
+
+databases:
+  - name: agrishield-db
+    plan: free
+    region: singapore
+    databaseName: agrishield
+    user: agrishield

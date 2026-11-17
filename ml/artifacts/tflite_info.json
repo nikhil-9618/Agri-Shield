@@ -1,0 +1,17 @@
+{
+  "size_bytes": 5185020,
+  "input_shape": [
+    1,
+    128,
+    128,
+    3
+  ],
+  "input_dtype": "<class 'numpy.float32'>",
+  "output_shape": [
+    1,
+    27
+  ],
+  "output_dtype": "<class 'numpy.float32'>",
+  "quantization": "float16",
+  "numpy_input": "float32"
+}

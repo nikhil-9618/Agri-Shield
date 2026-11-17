@@ -1,0 +1,27 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+backend/.env
+backend/uploads/
+backend/*.db
+
+# Flutter / Android
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.idea/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/key.properties
+mobile/android/app/*.jks
+mobile/ios/Pods/
+
+# Generated / large artifacts (rebuild with scripts/build_apk.sh)
+/artifacts/
+ml/artifacts/*.keras
+
+# OS noise
+.DS_Store
