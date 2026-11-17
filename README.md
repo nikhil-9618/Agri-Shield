@@ -14,7 +14,7 @@ colour — green, yellow or red — with a plain-language explanation.
 | API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
 | Model | MobileNetV2 transfer learning on real PlantVillage images, 27 classes, 6 crops |
 | Test accuracy | **84.8%** top-1, **97.3%** top-3 on 4,581 held-out images |
-| APK | `artifacts/agrishield-1.1.0-arm-release.apk` (34.6 MB, release-signed, arm64 + 32-bit) |
+| APK | `artifacts/agrishield-1.1.1-arm-release.apk` (35.1 MB, release-signed, arm64 + 32-bit) |
 
 ## What a farmer does
 
@@ -64,7 +64,7 @@ Build the signed APK:
 
 ```bash
 ./scripts/build_apk.sh
-# -> artifacts/agrishield-1.1.0-arm-release.apk
+# -> artifacts/agrishield-1.1.1-arm-release.apk
 ```
 
 ## The 12 screens
@@ -121,7 +121,7 @@ against the deployed URL with
 | Backend tests (`pytest`, 10 tests) | **10 passed** |
 | `flutter analyze` | **0 issues** |
 | `flutter test` (translations, offline JSON) | **4 passed** |
-| Release APK build | **succeeded**, 34.6 MB, signed (v2+v3), targetSdk 34, model bundled |
+| Release APK build | **succeeded**, 35.1 MB, signed (v2+v3), targetSdk 34, model and logo bundled |
 | Model evaluation on held-out test set | **84.78%** top-1, 97.25% top-3 |
 | Render runtime (no TensorFlow, LiteRT) | **10 tests passed**, model loads, ~116 MB RSS |
 | Docker image build / live Render deploy | **not performed** (no Docker daemon or Render account here) |

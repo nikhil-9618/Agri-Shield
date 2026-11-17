@@ -34,11 +34,11 @@ fi
 flutter pub get
 flutter analyze
 flutter build apk --release \
-  --build-name 1.1.0 --build-number 3 \
+  --build-name 1.1.1 --build-number 4 \
   --target-platform android-arm,android-arm64 \
   --dart-define=AGRI_API_BASE_URL="${AGRI_API_BASE_URL:-http://10.0.2.2:8000}"
 
 mkdir -p "$REPO_ROOT/artifacts"
 cp build/app/outputs/flutter-apk/app-release.apk \
-  "$REPO_ROOT/artifacts/agrishield-1.1.0-arm-release.apk"
-echo "APK: artifacts/agrishield-1.1.0-arm-release.apk"
+  "$REPO_ROOT/artifacts/agrishield-1.1.1-arm-release.apk"
+echo "APK: artifacts/agrishield-1.1.1-arm-release.apk"

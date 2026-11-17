@@ -36,7 +36,13 @@ class LanguageScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(20, 26, 20, 8),
               child: Row(
                 children: [
-                  const Icon(Icons.agriculture_rounded, size: 52, color: AgriColors.primary),
+                  Image.asset(
+                    'assets/branding/logo.png',
+                    width: 58,
+                    height: 58,
+                    filterQuality: FilterQuality.high,
+                    semanticLabel: 'AgriShield',
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(

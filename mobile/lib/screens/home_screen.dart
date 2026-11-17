@@ -91,6 +91,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ],
                     ),
                   ),
+                  Container(
+                    width: 52,
+                    height: 52,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Image.asset(
+                      'assets/branding/logo.png',
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                      semanticLabel: 'AgriShield',
+                    ),
+                  ),
+                  const SizedBox(width: 6),
                   SpeakerButton(text: greetingSpeech, language: lang, color: Colors.white),
                 ],
               ),

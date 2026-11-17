@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="shield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#16C784"/>
+      <stop offset="100%" stop-color="#087A55"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C8FF72"/>
+      <stop offset="100%" stop-color="#42D99A"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFE58A"/>
+      <stop offset="100%" stop-color="#F5A623"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shield silhouette -->
+  <path d="M256 30 L426 96 V224 C426 337 354 425 256 480 C158 425 86 337 86 224 V96 Z"
+        fill="#0B2635"/>
+  <path d="M256 49 L407 108 V222 C407 324 344 405 256 456 C168 405 105 324 105 222 V108 Z"
+        fill="none" stroke="url(#shield)" stroke-width="12"/>
+
+  <!-- Inner protective field -->
+  <path d="M256 83 L374 129 V222 C374 301 330 365 256 413 C182 365 138 301 138 222 V129 Z"
+        fill="#103D3D" opacity="0.75"/>
+
+  <!-- AI circuit connections -->
+  <g stroke="#5CE6B0" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.9">
+    <path d="M170 185 L207 185 L226 204"/>
+    <path d="M342 185 L305 185 L286 204"/>
+    <path d="M170 270 L204 270 L224 250"/>
+    <path d="M342 270 L308 270 L288 250"/>
+  </g>
+  <g fill="#B7FF8A">
+    <circle cx="170" cy="185" r="7"/>
+    <circle cx="342" cy="185" r="7"/>
+    <circle cx="170" cy="270" r="7"/>
+    <circle cx="342" cy="270" r="7"/>
+  </g>
+
+  <!-- Central crop stem -->
+  <path d="M256 350 C253 294 257 235 256 166"
+        fill="none" stroke="#E5F7C8" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Left leaf -->
+  <path d="M253 260 C205 259 175 228 178 179 C221 178 254 203 253 260 Z"
+        fill="url(#leaf)"/>
+  <path d="M190 191 Q221 215 246 247"
+        fill="none" stroke="#167C57" stroke-width="5" stroke-linecap="round"/>
+  <path d="M211 210 L215 191 M228 229 L239 211"
+        fill="none" stroke="#167C57" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Right leaf -->
+  <path d="M259 226 C262 176 295 146 343 150 C344 194 316 225 259 226 Z"
+        fill="url(#leaf)"/>
+  <path d="M276 211 Q307 180 333 163"
+        fill="none" stroke="#167C57" stroke-width="5" stroke-linecap="round"/>
+  <path d="M299 188 L293 169 M316 176 L332 180"
+        fill="none" stroke="#167C57" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- New growth -->
+  <path d="M256 173 C231 149 235 117 256 100 C280 120 280 149 256 173 Z"
+        fill="url(#gold)"/>
+  <path d="M256 159 L256 118"
+        stroke="#A86B13" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Crop field / roots -->
+  <path d="M207 350 Q256 326 305 350"
+        fill="none" stroke="#F5C75E" stroke-width="7" stroke-linecap="round"/>
+  <path d="M256 350 L230 376 M256 350 L282 376"
+        fill="none" stroke="#F5C75E" stroke-width="6" stroke-linecap="round"/>
+</svg>
