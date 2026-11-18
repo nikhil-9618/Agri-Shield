@@ -24,6 +24,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   int _stage = 0;
   bool _queued = false;
   String? _error;
+  String? _rejection;
   Timer? _timer;
 
   @override
@@ -43,6 +44,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
     setState(() {
       _stage = 0;
       _error = null;
+      _rejection = null;
       _queued = false;
     });
     final lang = ref.read(appProvider).language;
@@ -70,8 +72,13 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
     } on ApiException catch (e) {
       _timer?.cancel();
       if (!mounted) return;
+      if (e.code == 'not_a_leaf') {
+        setState(() => _rejection = e.message);
+        return;
+      }
       final friendly = switch (e.code) {
         'invalid_image' => L.t(lang, 'commonError'),
+        'leaf_check_unavailable' => L.t(lang, 'leafCheckUnavailable'),
         'model_unavailable' => e.message,
         _ => e.status == 0 ? L.t(lang, 'serverOffline') : e.message,
       };
@@ -87,7 +94,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   Widget build(BuildContext context) {
     final lang = ref.watch(appProvider.select((s) => s.language));
     final steps = [
-      L.t(lang, 'stepUploading'),
+      L.t(lang, 'stepLeaf'),
       L.t(lang, 'stepChecking'),
       L.t(lang, 'stepExplaining'),
     ];
@@ -98,9 +105,15 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
-        child: _queued
-            ? _QueuedView(imagePath: widget.imagePath)
-            : _error != null
+        child: _rejection != null
+            ? _NotLeafView(
+                imagePath: widget.imagePath,
+                reason: _rejection!,
+                language: lang,
+              )
+            : _queued
+                ? _QueuedView(imagePath: widget.imagePath)
+                : _error != null
                 ? Center(
                     child: ErrorView(
                       message: _error!,
@@ -184,6 +197,101 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                     ],
                   ),
       ),
+    );
+  }
+}
+
+class _NotLeafView extends StatelessWidget {
+  final String imagePath;
+  final String reason;
+  final String language;
+
+  const _NotLeafView({
+    required this.imagePath,
+    required this.reason,
+    required this.language,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final body = reason == 'person'
+        ? L.t(language, 'notLeafPerson')
+        : L.t(language, 'notLeafNoLeaf');
+
+    return ListView(
+      padding: const EdgeInsets.all(22),
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Image.file(
+            File(imagePath),
+            height: 220,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Container(
+              height: 220,
+              color: AgriColors.secondarySoft,
+              child: const Icon(Icons.eco_rounded, size: 100, color: AgriColors.primary),
+            ),
+          ),
+        ),
+        const SizedBox(height: 22),
+        Center(
+          child: Container(
+            width: 92,
+            height: 92,
+            decoration: BoxDecoration(
+              color: AgriColors.warning.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.search_off_rounded, size: 52, color: AgriColors.warning),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          L.t(language, 'notLeafTitle'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 27, fontWeight: FontWeight.w900),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          body,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 21, height: 1.35),
+        ),
+        const SizedBox(height: 18),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AgriColors.secondarySoft,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.lightbulb_rounded, color: AgriColors.primary, size: 30),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  L.t(language, 'notLeafHint'),
+                  style: const TextStyle(fontSize: 19, height: 1.3),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        FilledButton.icon(
+          onPressed: () => context.pushReplacement('/camera'),
+          icon: const Icon(Icons.photo_camera_rounded, size: 28),
+          label: Text(L.t(language, 'notLeafRetry')),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton(
+          onPressed: () => context.go('/home'),
+          child: Text(L.t(language, 'navHome')),
+        ),
+      ],
     );
   }
 }

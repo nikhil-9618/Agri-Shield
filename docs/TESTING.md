@@ -76,11 +76,11 @@ The Docker image installs `backend/requirements-render.txt`, where
 
 ```bash
 ./scripts/build_apk.sh
-# Built build/app/outputs/flutter-apk/app-release.apk (57.6MB)
+# Built build/app/outputs/flutter-apk/app-release.apk (59.5MB)
 ```
 
-`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.2.0
-(code 6), minSdk 24, targetSdk 34, native ABIs `arm64-v8a`, `armeabi-v7a` and
+`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.3.0
+(code 7), minSdk 24, targetSdk 34, native ABIs `arm64-v8a`, `armeabi-v7a` and
 `x86_64`, and the camera/microphone/location/internet permissions.
 `apksigner verify` confirms v2 and v3 signatures with the release key; ZIP
 integrity and 16 KB alignment also pass.
@@ -88,7 +88,7 @@ integrity and 16 KB alignment also pass.
 ### Emulator install and launch
 
 A clean Android 7.0 (API 24) x86_64 emulator was booted with the SDK emulator
-(software acceleration). `adb install` of the universal 1.2.0 APK returned
+(software acceleration). `adb install` of the universal 1.3.0 APK returned
 `Success` (exit 0), and the app launched without a native crash. The native
 launch screen, animated splash, language picker, welcome screen, home header,
 app drawer and About screen were captured and visually checked. This test also
@@ -96,15 +96,31 @@ caught an earlier packaging bug: an arm-only build exposed x86_64 TFLite
 libraries but no x86_64 `libflutter.so`, causing a `MissingLibraryException`.
 The final build includes all three ABIs.
 
+### Leaf gate (1.3.0)
+
+Before any disease inference, `LeafGuard` runs ML Kit's bundled image-labeling
+model on-device. It rejects a person at confidence >= 0.50 and requires a
+plant/leaf label at confidence >= 0.30. The decision logic has four unit tests
+(`mobile/test/leaf_guard_test.dart`); all 8 Flutter tests pass.
+
+The real model was also run on the API 24 emulator against two photos:
+
+- a human portrait returned `leaf=false rejection=person`, with `smile 0.76`,
+  `beard 0.66` and `moustache 0.64`; it never reached the disease model;
+- a tomato late-blight leaf returned `leaf=true`, with `plant 0.63` and
+  `twig 0.36`, so it proceeded to diagnosis.
+
 ## Not tested (important)
 
 - **No physical Android phone was available**, so installation on the farmer's
   actual handset and a real-device camera/voice run were not performed. The APK
   was installed and launched on an API 24 emulator (see above).
-- Camera capture, gallery picker, TTS voices, speech-to-text and GPS permission
-  flows were not exercised end-to-end; the emulator has no camera/voice hardware
-  configured. Those paths are covered by code inspection and the backend tests,
-  not a real-device run.
+- Camera capture, TTS voices, speech-to-text and GPS permission flows were not
+  exercised end-to-end; the emulator has no camera/voice hardware configured.
+  The leaf gate itself was run on-device with a portrait and a leaf photo, but
+  the full gallery-picker -> result tap-through on the old emulator was not
+  completed. Those paths are covered by code inspection and unit tests, not a
+  real-device run.
 - No instrumented (`integration_test`) or widget smoke test of the navigation
   flow.
 - No live Open-Meteo call in tests (deliberately mocked); the production request

@@ -30,6 +30,15 @@ subprojects {
     }
 }
 
+// Some Flutter plugins (flutter_tts) still compile Kotlin to JVM 11 while AGP
+// compiles their Java to 17. AGP 9 rejects that combination, so align every
+// plugin's Kotlin target with the app before the build runs.
+subprojects {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

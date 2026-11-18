@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/api_client.dart';
+import 'core/leaf_guard.dart';
 import 'core/local_store.dart';
 import 'core/on_device_classifier.dart';
 import 'core/speech.dart';
@@ -240,6 +241,31 @@ class AppController extends Notifier<AppState> {
     final lang = normalizeLang(language ?? state.language);
     final localPath = await _store.persistImage(image);
 
+    // Refuse anything that is not clearly a leaf before the disease model can
+    // give a confident-looking answer for a person, car or other object.
+    try {
+      final leaf = await ref.read(leafGuardProvider).check(image.path);
+      if (!leaf.isLeaf) {
+        try {
+          await File(localPath).delete();
+        } catch (_) {
+          // The rejected copy is best-effort cleanup only.
+        }
+        throw ApiException('not_a_leaf', leaf.rejection?.name ?? 'no_leaf', 422);
+      }
+    } on LeafGuardException catch (e) {
+      try {
+        await File(localPath).delete();
+      } catch (_) {
+        // The rejected copy is best-effort cleanup only.
+      }
+      throw ApiException(
+        e.code == 'invalid_image' ? 'invalid_image' : 'leaf_check_unavailable',
+        e.message,
+        422,
+      );
+    }
+
     try {
       final diagnosis = await _onDevice.classify(
         await image.readAsBytes(),
@@ -290,6 +316,20 @@ class AppController extends Notifier<AppState> {
       if (!file.existsSync()) {
         remaining.removeWhere((e) => e.id == item.id);
         continue;
+      }
+      try {
+        final leaf = await ref.read(leafGuardProvider).check(item.imagePath);
+        if (!leaf.isLeaf) {
+          remaining.removeWhere((e) => e.id == item.id);
+          continue;
+        }
+      } on LeafGuardException catch (e) {
+        if (e.code == 'invalid_image') {
+          remaining.removeWhere((e) => e.id == item.id);
+          continue;
+        }
+        // ML Kit is unavailable: keep the photo queued and never guess.
+        break;
       }
       try {
         final local = await _onDevice.classify(
@@ -384,6 +424,14 @@ final appProvider = NotifierProvider<AppController, AppState>(AppController.new)
 
 final onDeviceClassifierProvider =
     Provider<OnDeviceClassifier>((ref) => OnDeviceClassifier());
+
+final leafGuardProvider = Provider<LeafGuard>((ref) {
+  final guard = LeafGuard();
+  ref.onDispose(() {
+    guard.close();
+  });
+  return guard;
+});
 
 final apiProvider = Provider<ApiClient>((ref) {
   final settings = ref.watch(appProvider.select((s) => s.settings));

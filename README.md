@@ -14,8 +14,8 @@ colour — green, yellow or red — with a plain-language explanation.
 | API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
 | Model | MobileNetV2 transfer learning on real PlantVillage images, 27 classes, 6 crops |
 | Test accuracy | **84.8%** top-1, **97.3%** top-3 on 4,581 held-out images |
-| APK | [agrishield-1.2.0-universal.apk](https://files.catbox.moe/rplj4u.apk) (43.7 MB, release-signed, arm64 + armv7 + x86_64) |
-| APK SHA-256 | `e03263fb375d78005961ecfa9ea2124c06b3714780a981b036dec5c2b43b15f3` |
+| APK | [agrishield-1.3.0-universal.apk](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk) (59.5 MB, release-signed, arm64 + armv7 + x86_64) |
+| APK SHA-256 | `ca77157d1ac17d76fb460c71e89de78cf62788faf02af7c8c00c586a7b56a93c` |
 
 ## What a farmer does
 
@@ -65,16 +65,21 @@ Build the signed APK:
 
 ```bash
 ./scripts/build_apk.sh
-# -> artifacts/agrishield-1.2.0-universal.apk
+# -> artifacts/agrishield-1.3.0-universal.apk
 ```
 
 ### Installing on a phone
 
-Download the [universal 1.2.0 APK](https://files.catbox.moe/rplj4u.apk)
-(43,668,858 bytes; SHA-256
-`e03263fb375d78005961ecfa9ea2124c06b3714780a981b036dec5c2b43b15f3`).
+Download the [universal 1.3.0 APK](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk)
+(59,452,656 bytes; SHA-256
+`ca77157d1ac17d76fb460c71e89de78cf62788faf02af7c8c00c586a7b56a93c`).
 It requires **Android 7.0 or newer** and is universal: it contains arm64,
-32-bit ARM and x86_64 native libraries. If an older AgriShield is already on the
+32-bit ARM and x86_64 native libraries.
+
+Every photo is checked on the phone before diagnosis. ML Kit's bundled
+image-labeling model rejects people, faces and images with no clear leaf
+material; only then does the 27-class disease model run. This check is free,
+offline and needs no API key or account, and no photo leaves the device for it. If an older AgriShield is already on the
 phone and was signed with a different key, Android shows "App not installed as
 package appears to be invalid". Uninstall the old copy first, then install this
 APK. The release key is kept out of Git (`key.properties`, `*.jks` ignored).
