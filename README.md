@@ -14,7 +14,8 @@ colour — green, yellow or red — with a plain-language explanation.
 | API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
 | Model | MobileNetV2 transfer learning on real PlantVillage images, 27 classes, 6 crops |
 | Test accuracy | **84.8%** top-1, **97.3%** top-3 on 4,581 held-out images |
-| APK | `artifacts/agrishield-1.2.0-universal.apk` (43.7 MB, release-signed, arm64 + armv7 + x86_64) |
+| APK | [agrishield-1.2.0-universal.apk](https://files.catbox.moe/rplj4u.apk) (43.7 MB, release-signed, arm64 + armv7 + x86_64) |
+| APK SHA-256 | `e03263fb375d78005961ecfa9ea2124c06b3714780a981b036dec5c2b43b15f3` |
 
 ## What a farmer does
 
@@ -69,7 +70,10 @@ Build the signed APK:
 
 ### Installing on a phone
 
-The APK requires **Android 7.0 or newer** and is universal: it contains arm64,
+Download the [universal 1.2.0 APK](https://files.catbox.moe/rplj4u.apk)
+(43,668,858 bytes; SHA-256
+`e03263fb375d78005961ecfa9ea2124c06b3714780a981b036dec5c2b43b15f3`).
+It requires **Android 7.0 or newer** and is universal: it contains arm64,
 32-bit ARM and x86_64 native libraries. If an older AgriShield is already on the
 phone and was signed with a different key, Android shows "App not installed as
 package appears to be invalid". Uninstall the old copy first, then install this
