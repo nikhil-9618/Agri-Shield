@@ -1,156 +1,487 @@
-# AgriShield
 
-A farmer-first Android app for crop disease checks, spoken advice and weather
-warnings, built for rural India where typing, English and steady internet are
-not guaranteed.
+# 🌱 AgriShield
+### Smart Crop Disease Detection & Agricultural Assistance
 
-Telugu is the default; Hindi, English, Tamil and Kannada are fully translated.
-Every important screen has a large speaker button, and the result is a single
-colour — green, yellow or red — with a plain-language explanation.
+**Helping farmers identify crop diseases, understand symptoms, and take informed action — in their own language.**
 
-| | |
-| --- | --- |
-| App | Flutter (Android), package `org.agrishield.agrishield` |
-| API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
-| Model | MobileNetV2 transfer learning on PlantVillage, 38 classes, 14 crops |
-| Test accuracy | **87.3%** top-1, **97.2%** top-3 on 6,388 held-out PlantVillage images (the float16 TFLite export measures 88.5% on the same split) |
-| Confidence | calibrated (temperature 0.875); a named disease is right **98%** of the time on validation — see [docs/CALIBRATION.md](docs/CALIBRATION.md) |
-| Field accuracy | **not validated** — 0.8% top-1 agreement on 118 real field photos, and the calibrated gate abstains on 83% of them; see [docs/FIELD_VALIDATION.md](docs/FIELD_VALIDATION.md) |
-| APK (1.4.1, built locally) | `artifacts/agrishield-1.4.1-universal.apk` (58.9 MB, signed, arm64 + armv7 + x86_64) |
-| APK SHA-256 | `d79cbd86bea002c96d705db567648ff1eb3af809bd1fd7972af1f8836a04d0c3` |
-| Published APK (1.3.0) | [agrishield-1.3.0-universal.apk](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk) (59.5 MB) |
+AgriShield is an AI-powered Android application designed to make agricultural technology accessible to farmers across rural India.
 
-## What a farmer does
+Farmers can capture a picture of a crop leaf, receive an AI-based disease prediction, listen to agricultural guidance in their preferred language, and access weather-related warnings.
 
-1. Opens the app, taps their language (each card speaks its name).
-2. Sees a three-picture explanation; taps the big green **Start**.
-3. Taps **Check my crop**, points the camera at a leaf, and takes one photo.
-4. Sees a big green/yellow/red result and presses the speaker to hear what to do.
+The application is designed for real-world conditions where internet connectivity may be unreliable, typing may be difficult, and English may not be familiar.
 
-No form filling, no OTP, no password. The trained model ships inside the app,
-so a photo is diagnosed on the phone even with no internet. An account is
-created silently only for the optional server features (weather, voice).
+---
 
-## Repository layout
+## 🌾 Why AgriShield?
 
+Crop diseases can damage agricultural production when symptoms are not identified early.
+
+Many farmers face challenges such as:
+- Difficulty identifying plant diseases.
+- Limited access to agricultural experts.
+- Language barriers when using digital applications.
+- Unreliable internet connectivity in rural areas.
+- Confusing technical information about crop diseases.
+
+**AgriShield aims to make crop health information simple, accessible, and understandable.**
+
+---
+
+## ✨ Key Features
+
+### 1. 📸 AI-Powered Crop Disease Detection
+- Capture a photograph of a crop leaf.
+- Analyze the image using an on-device AI model.
+- Receive a predicted disease or an unclear result.
+- View prediction confidence.
+- Access disease-specific agricultural guidance.
+
+The application uses a MobileNetV2 model trained on the PlantVillage dataset.
+
+**Important:** Predictions are research-model outputs, not confirmed field diagnoses. Accuracy on real-world field photographs has not yet been established.
+
+### 2. 🗣️ Multilingual Voice Assistance
+
+AgriShield supports five languages:
+
+| Language | Availability |
+|---|---|
+| Telugu | Default |
+| Hindi | Supported |
+| English | Supported |
+| Tamil | Supported |
+| Kannada | Supported |
+
+Features:
+- Localized application screens.
+- Spoken language guidance.
+- Large speaker buttons.
+- Simple explanations instead of complicated agricultural terminology.
+
+### 3. 🌦️ Weather Information & Alerts
+- Current weather information.
+- Weather forecasts.
+- Crop-related weather risk information.
+- Cached weather information for offline reference.
+
+Weather functionality requires an internet connection to retrieve updated information.
+
+### 4. 🌱 Agricultural Disease Guidance
+
+Each supported disease has a dedicated advisory containing:
+
+- Common symptoms.
+- Immediate actions.
+- Things to avoid.
+- Preventive practices.
+- When to contact an agricultural expert.
+
+The advisory content is available in five supported languages.
+
+### 5. 📱 Offline-First Functionality
+
+AgriShield is designed to work even when internet connectivity is unavailable.
+
+Available offline:
+- Crop disease model inference.
+- Bundled agricultural advisories.
+- Previously saved diagnosis results.
+- Application language resources.
+- Queued photo records for later synchronization.
+
+Weather updates and server-dependent features require connectivity.
+
+### 6. 🔊 Farmer-Friendly Interface
+
+The application focuses on accessibility.
+
+- Large buttons and readable text.
+- Simple navigation.
+- Colour-coded diagnosis results.
+- Spoken instructions.
+- Minimal typing.
+- No mandatory registration for basic offline diagnosis.
+
+---
+
+## 🚦 Understanding Diagnosis Results
+
+AgriShield uses three visual result categories.
+
+| Colour | Meaning |
+|---|---|
+| 🟢 Green | No supported disease detected with sufficient confidence |
+| 🟡 Yellow | Uncertain result; further inspection recommended |
+| 🔴 Red | A supported disease prediction requires attention |
+
+**Note:** A green result does not guarantee that a plant is disease-free. The model only recognizes the conditions represented by its supported classes.
+
+---
+
+## 🤖 AI Model & Performance
+
+AgriShield uses transfer learning with MobileNetV2.
+
+### Model Information
+
+| Specification | Details |
+|---|---|
+| Architecture | MobileNetV2 |
+| Training dataset | PlantVillage |
+| Supported classes | 38 |
+| Supported crop categories | 14 |
+| Model format | TensorFlow Lite |
+| Model size | Approximately 5 MB |
+| Inference | On-device |
+| Confidence calibration | Temperature scaling |
+| Calibration temperature | 0.875 |
+
+### Research Dataset Evaluation
+
+The model was evaluated using 6,388 held-out PlantVillage images.
+
+| Metric | Result |
+|---|---:|
+| Keras Top-1 Accuracy | 87.26% |
+| Keras Top-3 Accuracy | 97.20% |
+| TFLite Top-1 Accuracy | 88.51% |
+
+### Real-World Field Validation
+
+PlantVillage images have controlled backgrounds and conditions. Real agricultural photographs contain different lighting, backgrounds, camera qualities, and disease stages.
+
+Our initial field evaluation highlights this limitation:
+
+| Metric | Result |
+|---|---:|
+| Real field photographs evaluated | 118 |
+| Top-1 agreement | 0.8% |
+| Predictions rejected by calibrated confidence gate | 83% |
+
+**These results show that controlled-dataset accuracy cannot be treated as real-world agricultural accuracy.**
+
+Improving field performance through representative agricultural datasets, expert-verified labels, and real-world testing is an important development priority.
+
+Read the detailed reports:
+- `docs/CALIBRATION.md`
+- `docs/FIELD_VALIDATION.md`
+- `docs/MODEL_CARD.md`
+
+---
+
+## 🏗️ Technology Stack
+
+| Component | Technology |
+|---|---|
+| Android Application | Flutter |
+| Programming Language | Dart |
+| Backend API | Python, FastAPI |
+| Database | SQLite / PostgreSQL |
+| ORM | SQLAlchemy |
+| Machine Learning | TensorFlow / Keras |
+| Mobile Inference | TensorFlow Lite |
+| Image Validation | Google ML Kit |
+| Model Architecture | MobileNetV2 |
+| API Communication | REST API |
+| Deployment | Docker / Render |
+
+---
+
+## 📂 Project Structure
+
+```text
+AgriShield/
+│
+├── advisory/
+│   ├── diseases/
+│   ├── crops/
+│   ├── messages/
+│   ├── weather_rules/
+│   └── assistant_faq.json
+│
+├── backend/
+│   ├── API services
+│   ├── ML inference
+│   ├── Grad-CAM
+│   └── tests
+│
+├── ml/
+│   ├── training pipeline
+│   ├── evaluation scripts
+│   └── model artifacts
+│
+├── dataset/
+│   └── dataset documentation
+│
+├── database/
+│   ├── schema
+│   └── initialization scripts
+│
+├── mobile/
+│   ├── Flutter application
+│   ├── screens
+│   └── bundled assets
+│
+├── docs/
+│   ├── API.md
+│   ├── architecture
+│   ├── accessibility
+│   ├── testing
+│   ├── deployment
+│   └── model documentation
+│
+├── scripts/
+│   ├── build scripts
+│   └── setup scripts
+│
+└── README.md
 ```
-advisory/            farmer-facing content in 5 languages (source of truth)
-  diseases/*.json    38 per-disease advisories: signs, do now, avoid, prevent, expert
-  crops|messages|weather_rules|assistant_faq.json
-backend/             FastAPI service, TFLite inference, Grad-CAM, tests
-ml/                  real training/evaluation/export pipeline + artifacts
-  artifacts/         agrishield_model.tflite, .keras, class_names.json, metrics
-dataset/             dataset docs + reproducible downloader
-database/            PostgreSQL schema + init script
-mobile/              Flutter app (12 screens), bundled advisory assets
-docs/       API, architecture, accessibility, model card, testing, deployment
-scripts/             toolchain setup, advisory asset sync, APK build
-artifacts/           built release APK
-```
 
-## Quick start (from a clean checkout)
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to run AgriShield locally.
+
+### Prerequisites
+
+Install the following tools:
+
+- Flutter SDK
+- Dart SDK
+- Python 3.10 or compatible version specified by the backend dependencies
+- Android Studio
+- Android SDK
+- Git
+
+### 1. Clone the Repository
 
 ```bash
-# 1. Backend (creates .venv, installs deps, starts on :8000)
-./backend/run.sh
+git clone https://github.com/nikhil-9618/Agri-Shield.git
+```
 
-# 2. App against an Android emulator (10.0.2.2 = host machine)
+Navigate into the project:
+
+```bash
+cd Agri-Shield
+```
+
+### 2. Start the Backend
+
+Run:
+
+```bash
+./backend/run.sh
+```
+
+The backend starts locally on:
+
+```text
+http://localhost:8000
+```
+
+Health check:
+
+```text
+http://localhost:8000/health
+```
+
+### 3. Start the Flutter Application
+
+Navigate to the mobile directory:
+
+```bash
 cd mobile
+```
+
+Install dependencies:
+
+```bash
 flutter pub get
+```
+
+Run the application on an Android emulator:
+
+```bash
 flutter run --dart-define=AGRI_API_BASE_URL=http://10.0.2.2:8000
 ```
 
-On a physical phone use your computer's LAN IP, e.g.
-`--dart-define=AGRI_API_BASE_URL=http://192.168.1.20:8000`. The URL is also
-editable at runtime in **Profile → Server address** for field helpers.
+For a physical Android device, use your computer's reachable LAN IP address as the API base URL.
 
-Build the signed APK:
+### 4. Build the Android APK
+
+From the project root:
 
 ```bash
 ./scripts/build_apk.sh
-# -> artifacts/agrishield-1.4.1-universal.apk
 ```
 
-### Installing on a phone
+The generated APK is placed in:
 
-Download the [universal 1.3.0 APK](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk)
-(59,452,656 bytes; SHA-256
-`ca77157d1ac17d76fb460c71e89de78cf62788faf02af7c8c00c586a7b56a93c`).
-It requires **Android 7.0 or newer** and is universal: it contains arm64,
-32-bit ARM and x86_64 native libraries.
+```text
+artifacts/
+```
 
-Every photo is checked on the phone before diagnosis. ML Kit's bundled
-image-labeling model rejects people, faces and images with no clear leaf
-material; only then does the 38-class disease model run. This check is free,
-offline and needs no API key or account, and no photo leaves the device for it. If an older AgriShield is already on the
-phone and was signed with a different key, Android shows "App not installed as
-package appears to be invalid". Uninstall the old copy first, then install this
-APK. The release key is kept out of Git (`key.properties`, `*.jks` ignored).
+---
 
-The shield-and-leaf SVG (`assets/images/agrishield_logo.svg`) is the single brand
-source. It appears on the native launch screen, animated splash, language and
-welcome screens, home header, drawer, profile and About screen; the launcher icon
-uses the icon-only mark with the Deep Navy brand background.
+## 📲 Android Application
 
-## The screens
+AgriShield provides a universal Android APK.
 
-Splash · Language · Welcome · Home · Camera · Analysis · Result · Voice Assistant ·
-Weather · Alerts · Previous Diagnoses · Help · About · Profile/Settings.
+| Specification | Details |
+|---|---|
+| Application | AgriShield |
+| Package ID | org.agrishield.agrishield |
+| Platform | Android |
+| Minimum Android Version | Android 7.0 |
+| Architecture | ARM64, ARMv7, x86_64 |
+| Distribution | Universal APK |
 
-Offline behaviour is explicit rather than fake: a photo taken without internet
-is stored and queued, saved results stay readable with bundled advisories, the
-last weather snapshot is cached with its timestamp, and unknown voice questions
-get an honest "I don't know, ask the agriculture officer" instead of a made-up
-answer.
+### Download
 
-## API surface
+[Download AgriShield Android APK – Version 1.3.0](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk)
 
-`/health` plus:
+[View All Releases](https://github.com/nikhil-9618/Agri-Shield/releases)
 
-- `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`
-- `GET|PUT /api/user/profile`
-- `POST /api/detection/predict`, `GET /api/detection/history`,
-  `GET /api/detection/{id}`, `GET /api/detection/{id}/image`
-- `GET /api/weather/current|forecast|risk`
-- `GET /api/advisory/crops`, `GET /api/advisory`, `GET /api/advisory/{disease}`
-- `POST /api/assistant/ask`
+---
 
-Full request/response documentation: [docs/API.md](docs/API.md).
+## 🔌 Backend API
 
-## Deploy
+AgriShield uses a FastAPI backend for server-dependent functionality.
 
-The API deploys to Render with the included `render.yaml` Blueprint and
-`Dockerfile` (no TensorFlow needed at runtime; see
-[docs/RENDER_DEPLOY.md](docs/RENDER_DEPLOY.md)). Build the APK
-against the deployed URL with
-`AGRI_API_BASE_URL=https://<service>.onrender.com ./scripts/build_apk.sh`.
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/health` | API health check |
+| POST | `/api/auth/register` | Register an account |
+| POST | `/api/auth/login` | Authenticate a user |
+| GET | `/api/auth/me` | Get authenticated user |
+| GET / PUT | `/api/user/profile` | User profile |
+| POST | `/api/detection/predict` | Server-side prediction |
+| GET | `/api/detection/history` | Diagnosis history |
+| GET | `/api/detection/{id}` | Diagnosis details |
+| GET | `/api/detection/{id}/image` | Diagnosis image |
+| GET | `/api/weather/current` | Current weather |
+| GET | `/api/weather/forecast` | Weather forecast |
+| GET | `/api/weather/risk` | Weather risk |
+| GET | `/api/advisory/crops` | Supported crops |
+| GET | `/api/advisory` | Agricultural advisories |
+| GET | `/api/advisory/{disease}` | Disease-specific advisory |
+| POST | `/api/assistant/ask` | Voice assistant query |
 
-## Honesty notes
+Detailed documentation:
 
-- The model is trained on **PlantVillage**, a controlled-background research
-  dataset. Field accuracy will be lower; the app therefore shows low-confidence
-  results as "unclear" and never presents a prediction as a lab diagnosis.
-- Advisories deliberately contain **no pesticide brand names or doses**. They
-  describe cultural steps and say when to involve an agriculture officer.
-- The voice assistant is **retrieval-based**, not a free-form chatbot: it matches
-  the question to the bundled FAQ/disease advisory and weather data, cites its
-  source, and admits when it does not know.
-- Inference runs on the phone with the bundled 5 MB TFLite model, so diagnosis
-  works offline. The FastAPI service is the fallback on devices where the model
-  cannot load, and provides weather, voice and cross-device history.
+`docs/API.md`
 
-## Verification status
+---
 
-| Check | Result |
-| --- | --- |
-| Backend tests (`pytest`, 16 tests) | **16 passed** |
-| `flutter analyze` | **0 issues** |
-| `flutter test` (translations, offline JSON, leaf gate) | **8 passed** |
-| Release APK build | **succeeded**, 43.7 MB universal, signed (v2+v3), targetSdk 34 |
-| APK install + launch | **passed** on Android 7.0 (API 24) x86_64 emulator: `adb install` Success, no crash, screens rendered |
-| Model evaluation on held-out test set | **87.26%** top-1, 97.20% top-3 (Keras); 88.51% via the shipped TFLite file |
-| Render runtime (no TensorFlow, LiteRT) | **10 tests passed**, model loads, ~116 MB RSS |
-| Docker image build / live Render deploy | **not performed** (no Docker daemon or Render account here) |
-| Physical phone interaction | **not performed** (no physical device available) |
+## 🔐 Privacy & Security
 
-Details: [docs/TESTING.md](docs/TESTING.md).
+Farmer privacy is an important part of AgriShield.
+
+- Basic offline diagnosis does not require an account.
+- Image validation runs locally on the device.
+- On-device disease inference does not require uploading the photograph.
+- Server-dependent functionality is separated from offline diagnosis.
+- Authentication is used for optional account-based services.
+- No passwords, API keys, or signing credentials should be committed to the repository.
+
+Photos may be uploaded when a user explicitly uses a server-dependent feature that requires image submission.
+
+---
+
+## 🧪 Testing & Verification
+
+The following checks were recorded during the project's verification:
+
+| Test | Result |
+|---|---|
+| Backend automated tests | 16 passed |
+| Flutter static analysis | 0 issues |
+| Flutter tests | 8 passed |
+| TFLite model evaluation | Completed |
+| Android APK build | Successful |
+| APK installation on Android emulator | Successful |
+| Render runtime tests | 10 passed |
+| Docker image build | Not performed |
+| Live Render deployment | Not performed |
+| Physical device testing | Not performed |
+
+For complete details, see:
+
+`docs/TESTING.md`
+
+---
+
+## ⚠️ Important Limitations
+
+AgriShield is an ongoing agricultural technology project.
+
+Please understand these limitations:
+
+1. The AI model is trained using PlantVillage, which does not fully represent real-world field conditions.
+2. Real-world field accuracy has not been established.
+3. The model cannot identify every possible crop disease.
+4. Similar-looking diseases may produce incorrect predictions.
+5. Weather information requires an internet connection for updates.
+6. Agricultural recommendations should not replace professional diagnosis.
+7. Farmers should consult qualified agricultural officers before making important crop-treatment decisions.
+
+AgriShield does not currently provide pesticide brand recommendations or dosage instructions.
+
+---
+
+## 🛣️ Future Improvements
+
+Planned areas of development include:
+
+- Training with diverse, expert-verified Indian field photographs.
+- Improving disease identification across different growth stages.
+- Adding more regional crops and disease categories.
+- Improving confidence calibration using independent field datasets.
+- Building a larger agricultural knowledge base.
+- Supporting additional Indian languages.
+- Improving offline synchronization.
+- Conducting field testing with farmers and agricultural experts.
+- Evaluating model performance across different phones, cameras, and lighting conditions.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+You can contribute by:
+
+- Improving Flutter application features.
+- Developing and evaluating machine learning models.
+- Adding verified agricultural information.
+- Improving language translations.
+- Reporting bugs.
+- Improving documentation.
+- Testing the application on real Android devices.
+
+### Contribution Process
+
+1. Fork this repository.
+2. Create a new feature branch.
+3. Make your changes.
+4. Test your changes.
+5. Submit a Pull Request with a clear description.
+
+---
+
+## 📜 License
+
+Check the repository's `LICENSE` file for the applicable licensing terms.
+
+---
+
+## 🌱 Project Vision
+
+**Technology should not be a barrier between farmers and agricultural knowledge.**
+
+AgriShield aims to bring accessible crop health information, multilingual guidance, and AI-assisted agricultural support directly to farmers' smartphones.
+
+Built with a farmer-first approach.
+
+**AgriShield — Protecting Crops. Empowering Farmers.**
