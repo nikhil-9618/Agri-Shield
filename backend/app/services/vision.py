@@ -144,12 +144,13 @@ class VisionService:
     def _preprocess(self, img: Image.Image) -> np.ndarray:
         img = img.resize((self.input_size, self.input_size), Image.BILINEAR)
         arr = np.asarray(img, dtype=np.float32)
-        # Same preprocessing as training (MobileNetV2 scales to [-1, 1]).
-        arr = (arr / 127.5) - 1.0
+        # The exported graph ends with mobilenet_v2.preprocess_input, so it takes
+        # raw 0-255 pixels. Scaling to [-1, 1] here would apply it a second time
+        # and collapse every photo onto the same class (the v1.3.0 bug).
         arr = np.expand_dims(arr, axis=0)
         dtype = self.input_detail["dtype"] if self.input_detail else np.float32
         if dtype == np.uint8:
-            arr = ((arr + 1.0) * 127.5).astype(np.uint8)
+            arr = arr.astype(np.uint8)
         else:
             arr = arr.astype(np.float32)
         return arr

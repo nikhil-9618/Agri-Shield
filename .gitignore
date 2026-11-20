@@ -1,5 +1,6 @@
 # Python
 .venv/
+.venv-tflite/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -22,6 +23,7 @@ mobile/ios/Pods/
 # Generated / large artifacts (rebuild with scripts/build_apk.sh)
 /artifacts/
 ml/artifacts/*.keras
+ml/artifacts_v2/*.keras
 
 # OS noise
 .DS_Store

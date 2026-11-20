@@ -140,9 +140,8 @@ def main() -> None:
             if inp["dtype"] == np.uint8:
                 arr_in = arr.astype(np.uint8)
             else:
-                arr_in = np.asarray(
-                    tf.keras.applications.mobilenet_v2.preprocess_input(arr), dtype=np.float32
-                )
+                # The graph preprocesses internally; feed raw 0-255 pixels.
+                arr_in = np.asarray(arr, dtype=np.float32)
             for i in range(arr.shape[0]):
                 interpreter.set_tensor(inp["index"], arr_in[i : i + 1])
                 interpreter.invoke()

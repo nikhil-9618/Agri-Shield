@@ -1,0 +1,47 @@
+{
+  "dataset": "Digital Green Crop Disease Expert Annotations (CC-BY-4.0)",
+  "images_in_dataset": 989,
+  "scored_images": 118,
+  "out_of_scope_images": 626,
+  "unmapped_label_images": 245,
+  "top1_accuracy": 0.008,
+  "top3_accuracy": 0.102,
+  "abstention_rate": 0.466,
+  "confident_wrong_rate": 0.195,
+  "unsupported_crop_confident_rate": 0.55,
+  "per_crop": {
+    "corn": {
+      "n": 16,
+      "top1": 0.0
+    },
+    "pepper": {
+      "n": 8,
+      "top1": 0.0
+    },
+    "potato": {
+      "n": 48,
+      "top1": 0.0
+    },
+    "soybean": {
+      "n": 1,
+      "top1": 0.0
+    },
+    "squash": {
+      "n": 9,
+      "top1": 0.111
+    },
+    "strawberry": {
+      "n": 1,
+      "top1": 0.0
+    },
+    "tomato": {
+      "n": 35,
+      "top1": 0.0
+    }
+  },
+  "notes": [
+    "Reference labels are free-text agronomist diagnoses mapped by keyword, not a 1:1 class set.",
+    "Photos are farmer field photos (soil, shadows, multiple leaves), unlike PlantVillage.",
+    "unsupported_crop_confident_rate counts confident answers about crops not present in the photo."
+  ]
+}

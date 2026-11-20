@@ -12,10 +12,12 @@ colour — green, yellow or red — with a plain-language explanation.
 | --- | --- |
 | App | Flutter (Android), package `org.agrishield.agrishield` |
 | API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
-| Model | MobileNetV2 transfer learning on real PlantVillage images, 27 classes, 6 crops |
-| Test accuracy | **84.8%** top-1, **97.3%** top-3 on 4,581 held-out images |
-| APK | [agrishield-1.3.0-universal.apk](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk) (59.5 MB, release-signed, arm64 + armv7 + x86_64) |
-| APK SHA-256 | `ca77157d1ac17d76fb460c71e89de78cf62788faf02af7c8c00c586a7b56a93c` |
+| Model | MobileNetV2 transfer learning on PlantVillage, 38 classes, 14 crops |
+| Test accuracy | **87.3%** top-1, **97.2%** top-3 on 6,388 held-out PlantVillage images |
+| Field accuracy | **not validated** — 0.8% top-1 agreement on 118 real field photos; see [docs/FIELD_VALIDATION.md](docs/FIELD_VALIDATION.md) |
+| APK (1.4.0, built locally) | `artifacts/agrishield-1.4.0-universal.apk` (58.9 MB, signed, arm64 + armv7 + x86_64) |
+| APK SHA-256 | `0cfad0e58be92d85208c187e5804fe9f19031491a89f7ad392a1ed9b6eedbac5` |
+| Published APK (1.3.0) | [agrishield-1.3.0-universal.apk](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk) (59.5 MB) |
 
 ## What a farmer does
 
@@ -32,7 +34,7 @@ created silently only for the optional server features (weather, voice).
 
 ```
 advisory/            farmer-facing content in 5 languages (source of truth)
-  diseases/*.json    27 per-disease advisories: signs, do now, avoid, prevent, expert
+  diseases/*.json    38 per-disease advisories: signs, do now, avoid, prevent, expert
   crops|messages|weather_rules|assistant_faq.json
 backend/             FastAPI service, TFLite inference, Grad-CAM, tests
 ml/                  real training/evaluation/export pipeline + artifacts
@@ -65,7 +67,7 @@ Build the signed APK:
 
 ```bash
 ./scripts/build_apk.sh
-# -> artifacts/agrishield-1.3.0-universal.apk
+# -> artifacts/agrishield-1.4.0-universal.apk
 ```
 
 ### Installing on a phone
@@ -78,7 +80,7 @@ It requires **Android 7.0 or newer** and is universal: it contains arm64,
 
 Every photo is checked on the phone before diagnosis. ML Kit's bundled
 image-labeling model rejects people, faces and images with no clear leaf
-material; only then does the 27-class disease model run. This check is free,
+material; only then does the 38-class disease model run. This check is free,
 offline and needs no API key or account, and no photo leaves the device for it. If an older AgriShield is already on the
 phone and was signed with a different key, Android shows "App not installed as
 package appears to be invalid". Uninstall the old copy first, then install this

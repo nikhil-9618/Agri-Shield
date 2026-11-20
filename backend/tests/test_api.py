@@ -64,7 +64,7 @@ def test_health():
         assert r.status_code == 200
         body = r.json()
         assert body["status"] == "ok"
-        assert body["advisory_diseases"] == 27
+        assert body["advisory_diseases"] == 38
         if body["model_loaded"]:
             assert body["model_version"]
 

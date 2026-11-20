@@ -40,8 +40,9 @@ def main() -> None:
             for f in files:
                 img = tf.io.decode_jpeg(tf.io.read_file(str(f)), channels=3)
                 img = tf.image.resize(img, (img_size, img_size))
-                x = tf.keras.applications.mobilenet_v2.preprocess_input(img)
-                yield [tf.expand_dims(x, 0)]
+                # Calibrate on the model's real input domain (raw 0-255): the
+                # Keras graph preprocesses internally.
+                yield [tf.expand_dims(tf.cast(img, tf.float32), 0)]
 
         converter.representative_dataset = representative_ds
         converter.target_spec.supported_ops = [

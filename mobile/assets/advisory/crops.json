@@ -4,5 +4,13 @@
   "pepper": {"icon": "pepper", "names": {"te": "మిరప", "hi": "शिमला मिर्च", "en": "Pepper", "ta": "குடைமிளகாய்", "kn": "ಮೆಣಸಿನಕಾಯಿ"}},
   "corn":  {"icon": "corn", "names": {"te": "మొక్కజొన్న", "hi": "मक्का", "en": "Corn", "ta": "மக்காச்சோளம்", "kn": "ಮಕ್ಕಾಜೋಳ"}},
   "apple": {"icon": "apple", "names": {"te": "యాపిల్", "hi": "सेब", "en": "Apple", "ta": "ஆப்பிள்", "kn": "ಸೇಬು"}},
-  "grape": {"icon": "grape", "names": {"te": "ద్రాక్ష", "hi": "अंगूर", "en": "Grape", "ta": "திராட்சை", "kn": "ದ್ರಾಕ್ಷಿ"}}
+  "grape": {"icon": "grape", "names": {"te": "ద్రాక్ష", "hi": "अंगूर", "en": "Grape", "ta": "திராட்சை", "kn": "ದ್ರಾಕ್ಷಿ"}},
+  "blueberry": {"icon": "berry", "names": {"te": "బ్లూబెరీ", "hi": "ब्लूबेरी", "en": "Blueberry", "ta": "புளூபெரி", "kn": "ಬ್ಲೂಬೆರಿ"}},
+  "cherry": {"icon": "cherry", "names": {"te": "చెర్రీ", "hi": "चेरी", "en": "Cherry", "ta": "செர்ரி", "kn": "ಚೆರಿ"}},
+  "orange": {"icon": "orange", "names": {"te": "నారింజ", "hi": "संतरा", "en": "Orange", "ta": "ஆரஞ்சு", "kn": "ಕಿತ್ತಳೆ"}},
+  "peach": {"icon": "peach", "names": {"te": "పీచ్", "hi": "आड़ू", "en": "Peach", "ta": "பீச்", "kn": "ಪೀಚ್"}},
+  "raspberry": {"icon": "berry", "names": {"te": "రాస్ప్‌బెరీ", "hi": "रास्पबेरी", "en": "Raspberry", "ta": "ராஸ்பெரி", "kn": "ರಾಸ್ಪ್‌ಬೆರಿ"}},
+  "soybean": {"icon": "bean", "names": {"te": "సోయాబీన్", "hi": "सोयाबीन", "en": "Soybean", "ta": "சோயாபீன்", "kn": "ಸೋಯಾಬೀನ್"}},
+  "squash": {"icon": "gourd", "names": {"te": "స్క్వాష్", "hi": "स्क्वैश", "en": "Squash", "ta": "ஸ்குவாஷ்", "kn": "ಸ್ಕ್ವಾಶ್"}},
+  "strawberry": {"icon": "berry", "names": {"te": "స్ట్రాబెరీ", "hi": "स्ट्रॉबेरी", "en": "Strawberry", "ta": "ஸ்ட்ராபெரி", "kn": "ಸ್ಟ್ರಾಬೆರಿ"}}
 }

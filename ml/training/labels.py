@@ -52,8 +52,24 @@ CLASS_NAMES: list[str] = [
     "Tomato___healthy",
 ]
 
-# Crops the mobile app supports in v1 (master prompt section 6).
-SUPPORTED_CROPS: list[str] = ["tomato", "potato", "pepper", "corn", "apple", "grape"]
+# Every crop PlantVillage covers. The app ships all 38 classes so a farmer is
+# not told "unknown crop" when the leaf is cherry, peach, strawberry or citrus.
+SUPPORTED_CROPS: list[str] = [
+    "apple",
+    "blueberry",
+    "cherry",
+    "corn",
+    "grape",
+    "orange",
+    "peach",
+    "pepper",
+    "potato",
+    "raspberry",
+    "soybean",
+    "squash",
+    "strawberry",
+    "tomato",
+]
 
 # Prefix -> crop slug. PlantVillage mixes "Apple___", "Apple__Apple_scab",
 # "Pepper,_bell___", "Corn_(maize)___" spellings across mirrors.
@@ -120,7 +136,7 @@ def classify(raw_label: str) -> dict:
 
 
 def supported_class_indices() -> list[int]:
-    """Indices (into CLASS_NAMES) of the six crops the app ships with."""
+    """Indices (into CLASS_NAMES) of every crop the app ships with."""
     return [
         i for i, name in enumerate(CLASS_NAMES) if split_label(name)[0] in SUPPORTED_CROPS
     ]

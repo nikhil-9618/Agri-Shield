@@ -62,8 +62,9 @@ def gradcam_jpeg_base64(
     if bgr is None:
         raise ValueError("could not decode image")
     rgb = cv2.cvtColor(cv2.resize(bgr, (img_size, img_size)), cv2.COLOR_BGR2RGB)
+    # The Keras model applies mobilenet_v2.preprocess_input internally, so it
+    # expects raw 0-255 pixels here (scaling again would double-preprocess).
     batch = np.expand_dims(rgb.astype(np.float32), axis=0)
-    batch = tf.keras.applications.mobilenet_v2.preprocess_input(batch).numpy()
     heatmap = make_gradcam_heatmap(batch, model, last_conv_layer_name, pred_index)
     overlay = overlay_heatmap(bgr, heatmap)
     ok, buf = cv2.imencode(".jpg", overlay, [int(cv2.IMWRITE_JPEG_QUALITY), 82])

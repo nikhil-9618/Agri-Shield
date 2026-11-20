@@ -127,9 +127,13 @@ class OnDeviceClassifier {
     for (var i = 0, p = 0; i < rgba.length; i += 4) {
       final r = rgba[i], g = rgba[i + 1], b = rgba[i + 2];
       sum += r + g + b;
-      input[p++] = r / 127.5 - 1.0;
-      input[p++] = g / 127.5 - 1.0;
-      input[p++] = b / 127.5 - 1.0;
+      // The exported model scales 0-255 to [-1, 1] inside its own graph (the
+      // training pipeline ends with mobilenet_v2.preprocess_input). Feeding
+      // normalised pixels here would apply that twice and collapse every photo
+      // onto one class.
+      input[p++] = r.toDouble();
+      input[p++] = g.toDouble();
+      input[p++] = b.toDouble();
     }
 
     // A pitch-black frame is not a leaf; say so instead of guessing a disease.

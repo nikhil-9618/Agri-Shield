@@ -4,9 +4,9 @@
 
 | Field | Value |
 | --- | --- |
-| Version | `agrishield-mobilenetv2-v1` |
-| Task | 27-class single-label classification of leaf photos |
-| Crops | apple, corn (maize), grape, bell pepper, potato, tomato |
+| Version | `agrishield-mobilenetv2-v2` (app 1.4.0) |
+| Task | 38-class single-label classification of leaf photos (27 classes in v1) |
+| Crops | apple, blueberry, cherry, corn (maize), grape, orange, peach, bell pepper, potato, raspberry, soybean, squash, strawberry, tomato |
 | Architecture | MobileNetV2 (ImageNet weights) + global average pooling + dropout + dense softmax head |
 | Input | 128 × 128 RGB, resized from the source images (192 px stored) |
 | Training | transfer learning: 5 epochs frozen backbone, then 3 epochs fine-tuning the last 24 layers |
@@ -119,6 +119,73 @@ python -m ml.training.prepare_dataset --parquet /tmp/pv/*.parquet \
 python -m ml.training.train --data /tmp/agrishield_dataset --out ml/artifacts
 python -m ml.training.evaluate --data /tmp/agrishield_dataset --model ml/artifacts/agrishield_model.keras
 python -m ml.export.export_tflite --model ml/artifacts/agrishield_model.keras --out ml/artifacts/agrishield_model.tflite
+```
+
+## v2 (app 1.4.0) — what changed
+
+**The v1 inference pipeline was wrong, not the v1 model.** The exported graph
+contains `preprocess_input`, but the app, the API, Grad-CAM and evaluation all
+scaled pixels to [-1, 1] first. On 405 held-out images the model scored 88.4%
+with raw 0–255 input and 3.7% with the shipped normalisation — returning
+`corn_maize_common_rust` for every single photo. All five call sites now feed
+raw pixels. Details: `docs/MODEL_AUDIT.md`.
+
+v2 also widens coverage from 6 crops / 27 classes to 14 crops / 38 classes and
+replaces the `Dense(256, relu)` bottleneck with a direct softmax head.
+
+### Held-out PlantVillage test (6,388 images, never used for training)
+
+| Metric | v2 | v1 (reported) |
+| --- | --- | --- |
+| Top-1 accuracy | **0.873** | 0.863 (27 classes) |
+| Top-3 accuracy | **0.972** | 0.978 |
+| Mean confidence | 0.855 | — |
+| Keras↔TFLite top-1 agreement | ≥ 99% (test) | not tested |
+
+Model size: 4.61 MB float16, 128×128 input, `[1, 38]` output.
+
+### Real-field performance — the important number
+
+Measured on the Digital Green expert-annotated set (989 Indian farmer photos,
+agronomist labels, CC-BY-4.0). Of 118 photos whose crop and condition map onto
+our classes:
+
+| Metric | Value |
+| --- | --- |
+| Top-1 agreement with mapped reference label | **0.008** |
+| Top-3 agreement | 0.102 |
+| Abstained (confidence < 0.55) | 0.466 |
+| Confidently wrong (confidence ≥ 0.80, wrong) | 0.195 |
+| Confident answer on out-of-scope crops | 0.55 |
+
+PlantVillage accuracy does **not** transfer to field photos. The model was
+trained on lab-style single-leaf images and has not learned field backgrounds,
+whole-plant framing or Indian crop varieties. Treat it as a decision-support
+hint that must abstain, never as a diagnosis. See `docs/FIELD_VALIDATION.md`
+for method and caveats.
+
+### Known limitations (v2)
+
+- No calibration: softmax confidence is not a probability of correctness.
+- No OOD score; the ML Kit leaf gate is the only "not a leaf" filter.
+- Closed set: anything outside the 38 classes is forced into one of them.
+- No pHash de-duplication across splits; PlantVillage test accuracy is
+  probably optimistic.
+- Multi-label leaves are forced to one class.
+
+### Reproduce v2
+
+```bash
+python dataset/download_plantvillage.py --out /tmp/pv
+python -m ml.training.prepare_dataset \
+    --parquet /tmp/pv/data/*.parquet --test-parquet /tmp/pv/data/test-00000-of-00001.parquet \
+    --out /tmp/agrishield_v2 --max-per-class 400 --val-per-class 100 --test-per-class 200
+python -m ml.training.retrain --data /tmp/agrishield_v2 --out ml/artifacts_v2 \
+    --head-epochs 10 --finetune-epochs 0
+python -m ml.export.export_tflite --model ml/artifacts_v2/agrishield_model.keras \
+    --out mobile/assets/model/agrishield_model.tflite --quantize float16
+python -m pytest ml/tests -q
+python -m ml.validation.field_validation
 ```
 
 ## Citation
