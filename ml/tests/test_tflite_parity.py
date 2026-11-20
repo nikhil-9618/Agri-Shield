@@ -19,12 +19,14 @@ import pytest
 os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
 
 ROOT = Path(__file__).resolve().parents[2]
-KERAS = ROOT / "ml/artifacts_v2/agrishield_model.keras"
+# Compare the two artifacts that are actually shipped together. Pointing this at
+# an older run directory silently compares two different models.
+KERAS = ROOT / "ml/artifacts/agrishield_model.keras"
 TFLITE = ROOT / "mobile/assets/model/agrishield_model.tflite"
-DATASET = Path(os.environ.get("AGRISHIELD_TEST_DIR", "/tmp/agrishield_v2/test"))
+DATASET = Path(os.environ.get("AGRISHIELD_TEST_DIR", "/tmp/agrishield_v3/test"))
 
 
-def _sample_images(limit: int = 24):
+def _sample_images(limit: int = 200):
     files = sorted(DATASET.rglob("*.jpg"))[:limit] if DATASET.exists() else []
     if not files:
         pytest.skip(f"no test images under {DATASET}")
@@ -80,6 +82,7 @@ def test_keras_tflite_agree() -> None:
         tflite_pred = int(np.argmax(it.get_tensor(out["index"])[0]))
         agree += keras_pred == tflite_pred
 
+    # 24 images was too few to test a 0.99 threshold: one near-tie is 4%.
     rate = agree / len(files)
     print(f"keras/tflite agreement: {rate:.3f} on {len(files)} images")
     assert rate >= 0.99, f"agreement {rate:.3f} below 0.99"

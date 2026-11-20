@@ -47,8 +47,8 @@ def collect(split_dir: Path, interpreter, inp, out, class_names: list[str], size
     for index, name in enumerate(class_names):
         # Splits are stored under the filesystem-safe class folder name, which
         # is not the raw PlantVillage label ("Apple___Apple_scab" ->
-        # "Apple_Apple_scab").
-        folder = split_dir / class_directory_name(name)
+        # "apple_apple_scab"), and it is lower-cased by the dataset builder.
+        folder = split_dir / class_directory_name(name).lower()
         if not folder.is_dir():
             continue
         for path in sorted(folder.iterdir()):

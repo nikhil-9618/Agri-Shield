@@ -30,18 +30,19 @@ Fitted value on the shipped 38-class model:
 
 | Quantity | Value |
 | --- | --- |
-| Temperature `T` | **0.875** |
-| Validation accuracy (unchanged) | 0.8884 |
-| Test accuracy (unchanged) | 0.8851 |
-| ECE before → after (validation) | 0.0212 → **0.0154** |
-| ECE before → after (test) | 0.0202 → **0.0074** |
-| NLL before → after (test) | 0.3683 → **0.3649** |
+| Temperature `T` | **0.745** |
+| Validation accuracy (unchanged) | 0.8306 |
+| Test accuracy (unchanged) | 0.8622 |
+| ECE before → after (validation) | 0.0786 → **0.0128** |
+| ECE before → after (test) | 0.0950 → **0.0180** |
+| NLL before → after (test) | 0.5214 → **0.4672** |
 
-`T < 1` means the raw model was slightly *under*-confident on PlantVillage, not
-over-confident. The gain is small on in-distribution data because this model was
-already reasonably calibrated there. The value of the step is that the
-thresholds below now compare against a meaningful number instead of an
-arbitrary one.
+`T < 1` means the raw model is *over*-confident, which is what the v3 model
+(field-augmented training) turned out to be: its raw ECE was 0.095 on test, five
+times the v2 value, and temperature scaling brings it to 0.018. The effect on the
+farm-facing numbers is direct: at the raw confidences the uncalibrated gate
+accepted 47% of test images for 99.3% precision, and the calibrated gate accepts
+63% for 98.3% precision — the same safety target, more answered photos.
 
 ## Abstention thresholds
 
@@ -58,33 +59,39 @@ farmers still get an answer.
 
 | Setting | Value | Validation | Test |
 | --- | --- | --- | --- |
-| `min_confidence` | **0.8926** | coverage 0.713, precision 0.9805 | coverage 0.702, precision 0.9784 |
-| `healthy_confidence` | **0.8926** | 81.3% of healthy claims kept, precision 0.993 | — |
+| `min_confidence` | **0.8823** | coverage 0.6045, precision 0.9789, recall 0.7124 | coverage 0.6264, precision 0.9828 |
+| `healthy_confidence` | **0.8823** | 68.1% of healthy claims kept, precision 0.9863 | — |
 
 The healthy rule is fitted separately because a false "healthy" verdict stops
 treatment: it requires 95% precision among photos the model calls healthy. On
-validation that was satisfied at 81% of healthy claims with 99.3% precision, so
+validation that was satisfied at 68.1% of healthy claims with 98.6% precision, so
 the healthy threshold coincides with the abstention threshold rather than being
 raised above it.
+
+The abstention search targets 98% precision with at least 60% coverage. On the
+v3 validation split the lowest threshold reaching the target is 0.8823, and the
+result is reported as-is: 97.89%, i.e. `"target_met": false` by 0.11 percentage
+points. The threshold is not nudged to make that flag green.
 
 ## What this does and does not fix on field photos
 
 Re-running `ml/validation/field_validation.py` with the calibration file:
 
-| Metric (118 scored field photos) | Threshold 0.55 (before) | Calibrated 0.8926 |
+| Metric (118 scored field photos) | Threshold 0.55 (before) | Calibrated 0.8823 |
 | --- | --- | --- |
-| Abstained | 0.373 | **0.831** |
-| Answered and wrong | 0.619 | **0.169** |
-| Top-1 agreement | 0.008 | 0.008 |
-| Confident answer on an absent crop (626 photos) | 0.617 | **0.208** |
+| Abstained | 0.619 | **0.941** |
+| Answered and wrong | 0.331 | **0.034** |
+| Top-1 agreement | 0.110 | 0.110 |
+| Confident answer on an absent crop (626 photos) | 0.468 | **0.118** |
 
 Read this honestly:
 
-- The gate removes most harmful answers: it refuses 83% of field photos and cuts
-  confident answers about absent crops by two thirds.
-- It does **not** make field photos diagnosable. All 20 field photos it still
-  answered were wrong. Top-1 agreement is unchanged at 0.008, exactly as
-  expected, because temperature scaling cannot change predictions.
+- The gate removes most harmful answers: it refuses 94% of field photos and cuts
+  confident answers about absent crops by three quarters.
+- It does **not** make field photos diagnosable. It answers 7 of 118 field
+  photos, and 3 of those 7 match the mapped label. Top-1 agreement is unchanged
+  at 0.110, exactly as expected, because temperature scaling cannot change
+  predictions.
 - So the app is now mostly silent on field photos instead of confidently wrong.
   That is safer, not solved. The remaining fix is training on field imagery, not
   more threshold tuning.
@@ -128,7 +135,7 @@ an old bundle still runs — it just loses the fitted thresholds.
 ## Reproduce
 
 ```bash
-python -m ml.calibration.run_calibration --data /tmp/agrishield_v2 \
+python -m ml.calibration.run_calibration --data /tmp/agrishield_v3 \
     --out ml/artifacts/calibration.json
 cp ml/artifacts/calibration.json mobile/assets/model/calibration.json
 python -m ml.validation.field_validation --data /tmp/digigreen \

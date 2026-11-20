@@ -32,48 +32,57 @@ Before calibration (the v1.4.0 thresholds):
 
 | Metric | Value | n |
 | --- | --- | --- |
-| Top-1 agreement with mapped label | **0.008** | 118 |
-| Top-3 agreement | 0.102 | 118 |
-| Abstention (confidence < 0.55) | 0.373 | 118 |
-| Answered and wrong (confidence ≥ 0.55) | 0.619 | 118 |
-| Confident answer on an out-of-scope crop | 0.617 | 626 |
+| Top-1 agreement with mapped label | **0.110** | 118 |
+| Top-3 agreement | 0.203 | 118 |
+| Abstention (confidence < 0.55) | 0.619 | 118 |
+| Accuracy on answered photos (confidence ≥ 0.55) | 0.133 | 45 |
+| Confident answer on an out-of-scope crop | 0.468 | 626 |
 
-After calibration (temperature 0.875, `min_confidence` 0.8926 — see
+After calibration (temperature 0.745, `min_confidence` 0.8823 — see
 `docs/CALIBRATION.md`):
 
 | Metric | Value | n |
 | --- | --- | --- |
-| Top-1 agreement with mapped label | 0.008 | 118 |
-| Top-3 agreement | 0.102 | 118 |
-| Abstention (confidence < 0.8926) | **0.831** | 118 |
-| Answered and wrong (confidence ≥ 0.8926) | **0.169** | 118 |
-| Confident answer on an out-of-scope crop | **0.208** | 626 |
+| Top-1 agreement with mapped label | 0.110 | 118 |
+| Top-3 agreement | 0.203 | 118 |
+| Abstention (confidence < 0.8823) | **0.941** | 118 |
+| Accuracy on answered photos (confidence ≥ 0.8823) | **0.429** | 7 |
+| Confident-but-wrong rate | **0.034** | 118 |
+| Confident answer on an out-of-scope crop | **0.118** | 626 |
 
 Calibration changes how often the app speaks, not what it gets right: it now
-refuses 83% of field photos and cuts confident answers about absent crops by
-two thirds. All 20 field photos it still answered were wrong.
+refuses 94% of field photos and cuts confident answers about absent crops by
+three quarters. It answers 7 of 118 photos, 3 of them correctly.
+
+The v3 model (trained with PlantDoc field photos in the mix) is a real
+improvement over v2 on this set — 0.008 → 0.110 top-1, and the calibrated gate
+no longer answers 20 photos with 0 correct — but 0.11 is still nowhere near
+usable as a field diagnosis.
 
 Per crop (scored photos): corn 16, potato 48, tomato 35, squash 9, pepper 8,
-soybean 1, strawberry 1. Top-1 was 0 for every crop except squash (1/9).
+soybean 1, strawberry 1. Top-1 is best on squash (0.222) and corn (0.188), worst
+on potato (0.021 over 48 photos) despite potato scoring 0.90+ macro F1 internally
+— that gap is domain shift, not class imbalance.
 
 ## Interpretation
 
-**PlantVillage accuracy does not transfer to field photographs.** The 87.3%
+**PlantVillage accuracy does not transfer to field photographs.** The 86.2%
 held-out test number describes lab-style single-leaf images with uniform
-backgrounds. Real farmer photos contain soil, shadows, multiple leaves, whole
+backgrounds (plus PlantDoc field photos, which the model now partially learns). Real farmer photos contain soil, shadows, multiple leaves, whole
 plants, blur and varieties the model has never seen, and the model mostly gets
 them wrong.
 
 Two things make this less bad than it looks, and neither makes it good enough:
 
 1. With calibration most scored photos are abstentions rather than wrong
-   answers (83% rather than 37%), and the app shows "could not decide" for
+   answers (94% rather than 62%), and the app shows "could not decide" for
    those.
 2. Part of the disagreement is label-mapping error: a photo labelled "early
    blight" on a whole plant is not the same task as a cropped single leaf.
 
-But 19.5% confidently wrong and 55% confident on crops that are not even in the
-photo are not acceptable for a diagnosis claim. Two actions follow:
+But 11.8% still get a confident answer about a crop that is not in the model's
+class list, and 9 of 10 scorable field photos are refused, which is not
+acceptable for a diagnosis claim. Two actions follow:
 
 - The app must not describe a result as a diagnosis. It says "possible problem"
   and offers the agriculture officer.

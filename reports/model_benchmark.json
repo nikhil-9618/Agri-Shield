@@ -4,7 +4,7 @@
   "epochs": 3,
   "batch": 64,
   "learning_rate": 0.001,
-  "budget_note": "Frozen backbones, identical budget. Recovered from log after a runner restart; params/latency filled by the resumed run where available.",
+  "budget_note": "Frozen backbones, identical budget. Recovered from log after a runner restart; params/latency filled by the resumed run where available. Results are merged per architecture, so interrupted runs can resume. Entries flagged recovered_from_log come from completed runs whose JSON was lost to an overwrite; their metrics are the logged values.",
   "results": [
     {
       "arch": "mobilenetv2",
@@ -21,7 +21,45 @@
           0.7874,
           0.8137
         ]
-      }
+      },
+      "params_total": 2306662,
+      "params_measured": "counted from the same build() after the run"
+    },
+    {
+      "arch": "resnet50",
+      "params_total": 23665574,
+      "params_backbone": 23587712,
+      "epochs_run": 3,
+      "train_seconds": 561.4,
+      "val": {
+        "accuracy": 0.8155,
+        "top3_accuracy": 0.9428,
+        "macro_f1": 0.8126,
+        "weighted_f1": 0.81
+      },
+      "val_curve": {
+        "loss": [
+          1.4583,
+          0.7813,
+          0.6406
+        ],
+        "val_loss": [
+          0.7886,
+          0.6349,
+          0.6274
+        ],
+        "accuracy": [
+          0.6077,
+          0.7786,
+          0.8139
+        ],
+        "val_accuracy": [
+          0.7695,
+          0.8117,
+          0.8155
+        ]
+      },
+      "latency_ms_batch1_cpu": 79.4
     },
     {
       "arch": "mobilenetv3large",
@@ -38,7 +76,83 @@
           0.7913,
           0.8102
         ]
-      }
+      },
+      "params_total": 3032870,
+      "params_measured": "counted from the same build() after the run"
+    },
+    {
+      "arch": "efficientnetv2b0",
+      "recovered_from_log": true,
+      "params_total": 5967990,
+      "params_backbone": 5919312,
+      "epochs_run": 3,
+      "train_seconds": 261.8,
+      "val": {
+        "accuracy": 0.7787,
+        "top3_accuracy": 0.9236,
+        "macro_f1": 0.775,
+        "weighted_f1": 0.7703
+      },
+      "val_curve": {
+        "loss": [
+          2.0011,
+          1.1565,
+          0.9537
+        ],
+        "val_loss": [
+          1.2501,
+          0.9324,
+          0.8007
+        ],
+        "accuracy": [
+          0.5201,
+          0.7094,
+          0.7547
+        ],
+        "val_accuracy": [
+          0.7031,
+          0.7509,
+          0.7787
+        ]
+      },
+      "latency_ms_batch1_cpu": 82.93
+    },
+    {
+      "arch": "efficientnetb0",
+      "recovered_from_log": true,
+      "params_total": 4098249,
+      "params_backbone": 4049571,
+      "epochs_run": 3,
+      "train_seconds": 405.3,
+      "val": {
+        "accuracy": 0.7649,
+        "top3_accuracy": 0.9182,
+        "macro_f1": 0.7614,
+        "weighted_f1": 0.758
+      },
+      "val_curve": {
+        "loss": [
+          1.9462,
+          1.1202,
+          0.9296
+        ],
+        "val_loss": [
+          1.2398,
+          0.9365,
+          0.8221
+        ],
+        "accuracy": [
+          0.5258,
+          0.713,
+          0.753
+        ],
+        "val_accuracy": [
+          0.6878,
+          0.7478,
+          0.7649
+        ]
+      },
+      "latency_ms_batch1_cpu": 97.02
     }
   ],
   "best_by_macro_f1": "mobilenetv2"

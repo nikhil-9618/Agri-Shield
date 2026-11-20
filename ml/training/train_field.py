@@ -123,14 +123,16 @@ def main() -> int:
     tf.keras.utils.set_random_seed(seed)
     out.mkdir(parents=True, exist_ok=True)
 
+    # Split folders are stored lower-cased (``apple_apple_scab``), so the label
+    # lookup has to be case-insensitive or every folder looks unmapped.
     class_names = sorted(p.name for p in (data / "train").iterdir() if p.is_dir())
     labels = json.loads(Path("ml/artifacts/class_names.json").read_text())
     labels_by_dir = {}
     from ml.training.labels import class_directory_name
 
     for entry in labels:
-        labels_by_dir[class_directory_name(entry["label"])] = entry
-    missing = [n for n in class_names if n not in labels_by_dir]
+        labels_by_dir[class_directory_name(entry["label"]).lower()] = entry
+    missing = [n for n in class_names if n.lower() not in labels_by_dir]
     if missing:
         raise SystemExit(f"classes without metadata: {missing[:3]}")
 
@@ -230,7 +232,7 @@ def main() -> int:
 
     model.save(out / "agrishield_model.keras")
     class_index = [
-        {"index": i, **{k: v for k, v in labels_by_dir[name].items() if k != "index"}}
+        {"index": i, **{k: v for k, v in labels_by_dir[name.lower()].items() if k != "index"}}
         for i, name in enumerate(class_names)
     ]
     (out / "class_names.json").write_text(json.dumps(class_index, indent=2))

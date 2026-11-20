@@ -6,46 +6,46 @@
   "unmapped_label_images": 245,
   "calibration": {
     "source": "ml/artifacts/calibration.json",
-    "temperature": 0.875,
-    "min_confidence": 0.8926,
-    "healthy_confidence": 0.8926
+    "temperature": 0.745,
+    "min_confidence": 0.8823,
+    "healthy_confidence": 0.8823
   },
   "uncalibrated": {
     "threshold": 0.55,
     "scored_images": 118,
-    "top1_accuracy": 0.008,
-    "top3_accuracy": 0.102,
-    "coverage": 0.627,
-    "accepted_top1_accuracy": 0.014,
-    "abstention_rate": 0.373,
-    "confident_wrong_rate": 0.619,
+    "top1_accuracy": 0.11,
+    "top3_accuracy": 0.203,
+    "coverage": 0.381,
+    "accepted_top1_accuracy": 0.133,
+    "abstention_rate": 0.619,
+    "confident_wrong_rate": 0.331,
     "out_of_scope_images": 626,
-    "out_of_scope_confident_rate": 0.617
+    "out_of_scope_confident_rate": 0.468
   },
   "calibrated": {
-    "threshold": 0.8926,
+    "threshold": 0.8823,
     "scored_images": 118,
-    "top1_accuracy": 0.008,
-    "top3_accuracy": 0.102,
-    "coverage": 0.169,
-    "accepted_top1_accuracy": 0.0,
-    "abstention_rate": 0.831,
-    "confident_wrong_rate": 0.169,
+    "top1_accuracy": 0.11,
+    "top3_accuracy": 0.203,
+    "coverage": 0.059,
+    "accepted_top1_accuracy": 0.429,
+    "abstention_rate": 0.941,
+    "confident_wrong_rate": 0.034,
     "out_of_scope_images": 626,
-    "out_of_scope_confident_rate": 0.208
+    "out_of_scope_confident_rate": 0.118
   },
   "per_crop": {
     "corn": {
       "n": 16,
-      "top1": 0.0
+      "top1": 0.188
     },
     "pepper": {
       "n": 8,
-      "top1": 0.0
+      "top1": 0.125
     },
     "potato": {
       "n": 48,
-      "top1": 0.0
+      "top1": 0.021
     },
     "soybean": {
       "n": 1,
@@ -53,7 +53,7 @@
     },
     "squash": {
       "n": 9,
-      "top1": 0.111
+      "top1": 0.222
     },
     "strawberry": {
       "n": 1,
@@ -61,7 +61,7 @@
     },
     "tomato": {
       "n": 35,
-      "top1": 0.0
+      "top1": 0.171
     }
   },
   "notes": [

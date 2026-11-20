@@ -41,19 +41,19 @@
   },
   {
     "index": 5,
-    "label": "Cherry_(including_sour)___Powdery_mildew",
-    "key": "cherry_including_sour_powdery_mildew",
-    "crop": "cherry",
-    "disease": "powdery_mildew",
-    "is_healthy": false
-  },
-  {
-    "index": 6,
     "label": "Cherry_(including_sour)___healthy",
     "key": "cherry_including_sour_healthy",
     "crop": "cherry",
     "disease": "healthy",
     "is_healthy": true
+  },
+  {
+    "index": 6,
+    "label": "Cherry_(including_sour)___Powdery_mildew",
+    "key": "cherry_including_sour_powdery_mildew",
+    "crop": "cherry",
+    "disease": "powdery_mildew",
+    "is_healthy": false
   },
   {
     "index": 7,
@@ -73,19 +73,19 @@
   },
   {
     "index": 9,
-    "label": "Corn_(maize)___Northern_Leaf_Blight",
-    "key": "corn_maize_northern_leaf_blight",
-    "crop": "corn",
-    "disease": "northern_leaf_blight",
-    "is_healthy": false
-  },
-  {
-    "index": 10,
     "label": "Corn_(maize)___healthy",
     "key": "corn_maize_healthy",
     "crop": "corn",
     "disease": "healthy",
     "is_healthy": true
+  },
+  {
+    "index": 10,
+    "label": "Corn_(maize)___Northern_Leaf_Blight",
+    "key": "corn_maize_northern_leaf_blight",
+    "crop": "corn",
+    "disease": "northern_leaf_blight",
+    "is_healthy": false
   },
   {
     "index": 11,
@@ -105,19 +105,19 @@
   },
   {
     "index": 13,
-    "label": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
-    "key": "grape_leaf_blight_isariopsis_leaf_spot",
-    "crop": "grape",
-    "disease": "leaf_blight_isariopsis_leaf_spot",
-    "is_healthy": false
-  },
-  {
-    "index": 14,
     "label": "Grape___healthy",
     "key": "grape_healthy",
     "crop": "grape",
     "disease": "healthy",
     "is_healthy": true
+  },
+  {
+    "index": 14,
+    "label": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "key": "grape_leaf_blight_isariopsis_leaf_spot",
+    "crop": "grape",
+    "disease": "leaf_blight_isariopsis_leaf_spot",
+    "is_healthy": false
   },
   {
     "index": 15,
@@ -169,19 +169,19 @@
   },
   {
     "index": 21,
-    "label": "Potato___Late_blight",
-    "key": "potato_late_blight",
-    "crop": "potato",
-    "disease": "late_blight",
-    "is_healthy": false
-  },
-  {
-    "index": 22,
     "label": "Potato___healthy",
     "key": "potato_healthy",
     "crop": "potato",
     "disease": "healthy",
     "is_healthy": true
+  },
+  {
+    "index": 22,
+    "label": "Potato___Late_blight",
+    "key": "potato_late_blight",
+    "crop": "potato",
+    "disease": "late_blight",
+    "is_healthy": false
   },
   {
     "index": 23,
@@ -209,19 +209,19 @@
   },
   {
     "index": 26,
-    "label": "Strawberry___Leaf_scorch",
-    "key": "strawberry_leaf_scorch",
-    "crop": "strawberry",
-    "disease": "leaf_scorch",
-    "is_healthy": false
-  },
-  {
-    "index": 27,
     "label": "Strawberry___healthy",
     "key": "strawberry_healthy",
     "crop": "strawberry",
     "disease": "healthy",
     "is_healthy": true
+  },
+  {
+    "index": 27,
+    "label": "Strawberry___Leaf_scorch",
+    "key": "strawberry_leaf_scorch",
+    "crop": "strawberry",
+    "disease": "leaf_scorch",
+    "is_healthy": false
   },
   {
     "index": 28,
@@ -241,6 +241,14 @@
   },
   {
     "index": 30,
+    "label": "Tomato___healthy",
+    "key": "tomato_healthy",
+    "crop": "tomato",
+    "disease": "healthy",
+    "is_healthy": true
+  },
+  {
+    "index": 31,
     "label": "Tomato___Late_blight",
     "key": "tomato_late_blight",
     "crop": "tomato",
@@ -248,7 +256,7 @@
     "is_healthy": false
   },
   {
-    "index": 31,
+    "index": 32,
     "label": "Tomato___Leaf_Mold",
     "key": "tomato_leaf_mold",
     "crop": "tomato",
@@ -256,7 +264,7 @@
     "is_healthy": false
   },
   {
-    "index": 32,
+    "index": 33,
     "label": "Tomato___Septoria_leaf_spot",
     "key": "tomato_septoria_leaf_spot",
     "crop": "tomato",
@@ -264,7 +272,7 @@
     "is_healthy": false
   },
   {
-    "index": 33,
+    "index": 34,
     "label": "Tomato___Spider_mites Two-spotted_spider_mite",
     "key": "tomato_spider_mites_two_spotted_spider_mite",
     "crop": "tomato",
@@ -272,19 +280,11 @@
     "is_healthy": false
   },
   {
-    "index": 34,
+    "index": 35,
     "label": "Tomato___Target_Spot",
     "key": "tomato_target_spot",
     "crop": "tomato",
     "disease": "target_spot",
-    "is_healthy": false
-  },
-  {
-    "index": 35,
-    "label": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
-    "key": "tomato_tomato_yellow_leaf_curl_virus",
-    "crop": "tomato",
-    "disease": "tomato_yellow_leaf_curl_virus",
     "is_healthy": false
   },
   {
@@ -297,10 +297,10 @@
   },
   {
     "index": 37,
-    "label": "Tomato___healthy",
-    "key": "tomato_healthy",
+    "label": "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "key": "tomato_tomato_yellow_leaf_curl_virus",
     "crop": "tomato",
-    "disease": "healthy",
-    "is_healthy": true
+    "disease": "tomato_yellow_leaf_curl_virus",
+    "is_healthy": false
   }
 ]

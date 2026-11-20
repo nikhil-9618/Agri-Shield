@@ -127,36 +127,40 @@ AgriShield uses transfer learning with MobileNetV2.
 | Specification | Details |
 |---|---|
 | Architecture | MobileNetV2 |
-| Training dataset | PlantVillage |
+| Training dataset | PlantVillage + PlantDoc (CC BY 4.0), 25,652 deduplicated images |
 | Supported classes | 38 |
 | Supported crop categories | 14 |
-| Model format | TensorFlow Lite |
-| Model size | Approximately 5 MB |
+| Model format | TensorFlow Lite (float16) |
+| Model size | 4.61 MB |
 | Inference | On-device |
 | Confidence calibration | Temperature scaling |
-| Calibration temperature | 0.875 |
+| Calibration temperature | 0.745 |
 
-### Research Dataset Evaluation
+### Dataset Evaluation
 
-The model was evaluated using 6,388 held-out PlantVillage images.
+Evaluated on 6,210 held-out images (5,991 PlantVillage + 219 PlantDoc field photos), with near-duplicate groups removed from the test split.
 
 | Metric | Result |
 |---|---:|
-| Keras Top-1 Accuracy | 87.26% |
-| Keras Top-3 Accuracy | 97.20% |
-| TFLite Top-1 Accuracy | 88.51% |
+| Keras Top-1 Accuracy | 84.91% |
+| Keras Macro F1 | 84.73% |
+| TFLite Top-1 Accuracy | 86.22% |
+| TFLite Top-3 Accuracy | 95.93% |
+| Keras ↔ TFLite top-1 agreement | 99.75% (400 images) |
 
 ### Real-World Field Validation
 
 PlantVillage images have controlled backgrounds and conditions. Real agricultural photographs contain different lighting, backgrounds, camera qualities, and disease stages.
 
-Our initial field evaluation highlights this limitation:
+On 236 independent PlantDoc field photos the model never trained on, top-1 is 38.1%. On 118 scorable Digital Green farmer photos it is 11.0%:
 
 | Metric | Result |
 |---|---:|
 | Real field photographs evaluated | 118 |
-| Top-1 agreement | 0.8% |
-| Predictions rejected by calibrated confidence gate | 83% |
+| Top-1 agreement | 11.0% |
+| Predictions rejected by calibrated confidence gate | 94.1% |
+| Accuracy on the photos it did answer | 42.9% |
+| Confident answers about a crop it does not know | 11.8% (of 626) |
 
 **These results show that controlled-dataset accuracy cannot be treated as real-world agricultural accuracy.**
 

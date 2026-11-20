@@ -224,7 +224,8 @@ def main() -> int:
     labels = json.loads(Path(args.labels).read_text())
     ordered = sorted(labels, key=lambda c: c["index"])
     class_keys = [c["key"] for c in ordered]
-    class_names = [class_directory_name(c["label"]) for c in ordered]
+    # Split folders are lower-cased by the dataset builder.
+    class_names = [class_directory_name(c["label"]).lower() for c in ordered]
 
     predict, kind = load_predictor(Path(args.model), args.img_size)
     internal = score_dir(Path(args.data) / "test", predict, class_names, class_keys, args.img_size)

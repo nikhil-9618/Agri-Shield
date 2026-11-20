@@ -27,3 +27,4 @@ ml/artifacts_v2/*.keras
 
 # OS noise
 .DS_Store
+ml/artifacts_v3/*.keras

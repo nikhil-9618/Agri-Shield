@@ -202,23 +202,9 @@ def main() -> int:
         write_report(Path(args.out), results, args, root)
         tf.keras.backend.clear_session()
 
-    results.sort(key=lambda r: (-r["val"]["macro_f1"], -r["val"]["accuracy"]))
-    report = {
-        "dataset": str(root),
-        "image_size": args.img_size,
-        "epochs": args.epochs,
-        "batch": args.batch,
-        "learning_rate": args.lr,
-        "budget_note": (
-            "All backbones are frozen and trained for the same number of epochs. "
-            "This ranks backbones at a fixed budget; it is not the final training run."
-        ),
-        "results": results,
-        "best_by_macro_f1": results[0]["arch"] if results else None,
-    }
-    out = Path(args.out)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, indent=2))
+    # Re-write through the merge so a run of one architecture does not drop the
+    # architectures measured by earlier runs of the same benchmark.
+    write_report(Path(args.out), results, args, root)
 
 
 def write_report(out: Path, results: list[dict], args, root: Path) -> None:

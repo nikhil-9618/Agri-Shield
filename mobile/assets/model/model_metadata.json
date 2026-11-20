@@ -1,0 +1,52 @@
+{
+  "model": "mobilenetv2 (ImageNet) + field augmentation + GAP/Dropout/softmax",
+  "arch": "mobilenetv2",
+  "input_size": 128,
+  "class_count": 38,
+  "trained_at_utc": "2026-11-20T11:36:04Z",
+  "files": {
+    "keras": {
+      "path": "ml/artifacts/agrishield_model.keras",
+      "bytes": 10224702,
+      "sha256": "0d28477b7233bf2c9fb3c08bec977a7a83ec7bdb8b5e4deda290b9fee9b9694f"
+    },
+    "tflite": {
+      "path": "mobile/assets/model/agrishield_model.tflite",
+      "bytes": 4611780,
+      "sha256": "46f89b6573f1542637bc25a3bb4bff77f6cc16f4236d071e3f078bf7fecf462a"
+    }
+  },
+  "metrics": {
+    "val": {
+      "accuracy": 0.8229,
+      "top3_accuracy": 0.9453,
+      "macro_f1": 0.8251,
+      "weighted_f1": 0.8211
+    },
+    "test": {
+      "accuracy": 0.8491,
+      "top3_accuracy": 0.9568,
+      "macro_f1": 0.8473,
+      "weighted_f1": 0.8475
+    },
+    "best_val_macro_f1": 0.8251,
+    "latency_ms_batch1_cpu": 58.41
+  },
+  "calibration": {
+    "temperature": 0.745,
+    "min_confidence": 0.8823,
+    "healthy_confidence": 0.8823,
+    "validation_ece": 0.0128,
+    "test_ece": 0.018,
+    "test_precision_at_threshold": 0.9828,
+    "test_coverage_at_threshold": 0.6264
+  },
+  "training_data": {
+    "dataset": "/tmp/agrishield_v3",
+    "sources": [
+      "PlantVillage (lab)",
+      "PlantDoc (field, CC-BY-4.0)"
+    ],
+    "external_field_validation": "Digital Green Crop Disease Images (CC-BY-4.0)"
+  }
+}

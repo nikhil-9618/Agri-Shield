@@ -1,10 +1,19 @@
 # Model card — AgriShield leaf disease classifier
 
+> **Current shipped model is v3** (`models/agri_shield_best.*`, app 1.4.2):
+> MobileNetV2 retrained on 25,652 deduplicated PlantVillage + PlantDoc images.
+> Test top-1 **0.8491** (Keras) / **0.8622** (TFLite float16), macro F1 **0.8473**,
+> Keras↔TFLite agreement **0.9975**, 4.61 MB. Real field photos are much worse:
+> 0.110 top-1 on 118 scorable Digital Green images with 94.1% abstention.
+> The dedicated card is `models/model_card.md`; measured training numbers are in
+> `reports/training_report.md`. The sections below document v2 and are kept as
+> history — the v2 numbers no longer describe the shipped file.
+
 ## Overview
 
 | Field | Value |
 | --- | --- |
-| Version | `agrishield-mobilenetv2-v2` (app 1.4.1) |
+| Version | `agrishield-mobilenetv2-v2` (app 1.4.1) — superseded by v3 below |
 | Task | 38-class single-label classification of leaf photos (27 classes in v1) |
 | Crops | apple, blueberry, cherry, corn (maize), grape, orange, peach, bell pepper, potato, raspberry, soybean, squash, strawberry, tomato |
 | Architecture | MobileNetV2 (ImageNet weights) + global average pooling + dropout + dense softmax head |
@@ -120,6 +129,47 @@ python -m ml.training.train --data /tmp/agrishield_dataset --out ml/artifacts
 python -m ml.training.evaluate --data /tmp/agrishield_dataset --model ml/artifacts/agrishield_model.keras
 python -m ml.export.export_tflite --model ml/artifacts/agrishield_model.keras --out ml/artifacts/agrishield_model.tflite
 ```
+
+## v3 (app 1.4.2) — trained on field imagery
+
+The v2 model was lab-only; every field measurement reflected that. v3 adds
+PlantDoc's field photos to training, selects the checkpoint by validation macro
+F1, and compares five backbones at a fixed budget before choosing one.
+
+| Backbone (3 epochs, frozen) | Val top-1 | Val macro F1 | Params |
+| --- | --- | --- | --- |
+| **MobileNetV2** (shipped) | 0.8137 | **0.8153** | 2,306,662 |
+| ResNet50 | 0.8155 | 0.8126 | 23,665,574 |
+| MobileNetV3-Large | 0.8102 | 0.8111 | 3,032,870 |
+| EfficientNetV2-B0 | 0.7787 | 0.7750 | 5,967,990 |
+| EfficientNet-B0 | 0.7649 | 0.7614 | 4,098,249 |
+
+ResNet50 wins on top-1 only, at 10× the parameters, so MobileNetV2 was kept —
+field macro F1 first, then size and phone latency.
+
+| Split | Top-1 | Top-3 | Macro F1 |
+| --- | --- | --- | --- |
+| Validation (3,914) | 0.8229 | 0.9453 | 0.8251 |
+| Test (6,210, Keras) | 0.8491 | 0.9568 | 0.8473 |
+| Test (6,210, TFLite float16) | 0.8622 | 0.9593 | 0.8585 |
+| PlantDoc external (236) | 0.3810 | — | 0.3300 |
+
+Calibration refit on the new validation split: T = 0.745, `min_confidence` =
+`healthy_confidence` = 0.8823, test ECE 0.0950 → 0.0180, precision 0.9828 at
+62.64% coverage. Keras↔TFLite top-1 agreement 0.9975 over 400 images (PASS at the
+0.99 gate); single-image CPU latency 2.3 ms.
+
+Field: on 118 scorable Digital Green photos top-1 went from 0.008 (v2) to 0.110,
+with 94.1% abstention and 3 of 7 answered photos correct; confident answers about
+unsupported crops dropped from 0.208 to 0.118.
+
+Why the test score is not higher than v2's 0.873: the v2 test set was 6,388
+PlantVillage-only images with near-duplicate leakage, while the v3 test set is
+6,210 images (5,991 PlantVillage + 219 PlantDoc) with near-duplicate groups whose
+train member existed removed. The v3 number is the harder, more honest one.
+
+Fine-tuning regressed (val macro F1 0.8251 → 0.8133 over 2 epochs at 5e-5 with 40
+trainable layers), so the shipped weights are the frozen-backbone checkpoint.
 
 ## v2 (app 1.4.0–1.4.1) — what changed
 
