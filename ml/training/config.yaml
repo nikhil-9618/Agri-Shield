@@ -1,0 +1,42 @@
+# AgriShield training configuration.
+#
+# Every value here can be overridden on the command line, so one file documents
+# the experiment that produced the shipped model. Paths are absolute or relative
+# to the repository root.
+
+data:
+  root: /tmp/agrishield_v3        # built by ml/datasets/build_unified.py
+  splits: [train, val, test]
+  external_field_test: /tmp/plantdoc/test   # never used for training
+
+model:
+  arch: mobilenetv2               # chosen by reports/model_benchmark.json
+  image_size: 128
+  dropout: 0.2
+  classes: 38
+
+training:
+  batch_size: 64
+  head_epochs: 10
+  fine_tune_epochs: 2
+  fine_tune_layers: 40            # last N backbone layers, MobileNetV2 ordering
+  head_lr: 0.0005
+  fine_tune_lr: 0.00005
+  label_smoothing: 0.05
+  class_weights: false            # see docs: measured, not assumed
+  seed: 1337
+  mixed_precision: false          # CPU training here
+  early_stopping_patience: 2
+
+output:
+  dir: ml/artifacts_v3
+  report: reports/training_report_v3.md
+  checkpoint_metric: val_macro_f1
+
+export:
+  tflite: mobile/assets/model/agrishield_model.tflite
+  keras: ml/artifacts_v3/agrishield_model.keras
+  class_names: mobile/assets/model/class_names.json
+  metadata: mobile/assets/model/model_metadata.json
+  quantize: float16
+  parity_min_agreement: 0.99

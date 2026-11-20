@@ -1,0 +1,45 @@
+{
+  "dataset": "/tmp/agrishield_v3",
+  "image_size": 128,
+  "epochs": 3,
+  "batch": 64,
+  "learning_rate": 0.001,
+  "budget_note": "Frozen backbones, identical budget. Recovered from log after a runner restart; params/latency filled by the resumed run where available.",
+  "results": [
+    {
+      "arch": "mobilenetv2",
+      "recovered_from_log": true,
+      "val": {
+        "accuracy": 0.8137,
+        "top3_accuracy": 0.932,
+        "macro_f1": 0.8153,
+        "weighted_f1": 0.811
+      },
+      "val_curve": {
+        "val_accuracy": [
+          0.7345,
+          0.7874,
+          0.8137
+        ]
+      }
+    },
+    {
+      "arch": "mobilenetv3large",
+      "recovered_from_log": true,
+      "val": {
+        "accuracy": 0.8102,
+        "top3_accuracy": 0.9315,
+        "macro_f1": 0.8111,
+        "weighted_f1": 0.8071
+      },
+      "val_curve": {
+        "val_accuracy": [
+          0.7322,
+          0.7913,
+          0.8102
+        ]
+      }
+    }
+  ],
+  "best_by_macro_f1": "mobilenetv2"
+}
