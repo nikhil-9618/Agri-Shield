@@ -2,11 +2,29 @@
 
 ## Automated checks (run in this repository)
 
-### Backend — 10 tests passing
+### Model — 3 tests passing
+
+```bash
+python -m pytest ml/tests -q
+# 3 passed
+```
+
+`ml/tests/test_tflite_parity.py` enforces the properties whose absence let the
+v1.3.0 bug ship:
+
+1. the TFLite model's output changes when the input changes (a constant-output
+   model fails);
+2. Keras and TFLite agree on at least 99% of sampled test images;
+3. the class-index table matches the model's output width.
+
+`ml/training/retrain.py` refuses to save a model below 0.80 test accuracy or
+one that ignores its input.
+
+### Backend — 12 tests passing
 
 ```bash
 cd backend && ../.venv/bin/python -m pytest tests -q
-# 10 passed, 2 warnings in ~10 s
+# 12 passed, 2 warnings in ~2 s
 ```
 
 `backend/tests/test_api.py` covers:
@@ -64,7 +82,7 @@ Produced `ml/artifacts/evaluation/metrics_test.json`:
 The Docker image installs `backend/requirements-render.txt`, where
 `ai-edge-litert` replaces TensorFlow. Verified in a clean virtualenv:
 
-- `pytest` → **10 passed** in 2.1 s (same tests, real TFLite model);
+- `pytest` → **12 passed** in 2.1 s (same tests, real TFLite model);
 - uvicorn started with `APP_ENV=production`, `GRADCAM_ENABLED=false`;
 - `/health` returned `model_loaded: true`;
 - a real PlantVillage test image was predicted as `corn_maize_common_rust`
@@ -79,7 +97,7 @@ The Docker image installs `backend/requirements-render.txt`, where
 # Built build/app/outputs/flutter-apk/app-release.apk (59.5MB)
 ```
 
-`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.3.0
+`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.4.0
 (code 7), minSdk 24, targetSdk 34, native ABIs `arm64-v8a`, `armeabi-v7a` and
 `x86_64`, and the camera/microphone/location/internet permissions.
 `apksigner verify` confirms v2 and v3 signatures with the release key; ZIP
