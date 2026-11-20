@@ -4,11 +4,36 @@
   "scored_images": 118,
   "out_of_scope_images": 626,
   "unmapped_label_images": 245,
-  "top1_accuracy": 0.008,
-  "top3_accuracy": 0.102,
-  "abstention_rate": 0.466,
-  "confident_wrong_rate": 0.195,
-  "unsupported_crop_confident_rate": 0.55,
+  "calibration": {
+    "source": "ml/artifacts/calibration.json",
+    "temperature": 0.875,
+    "min_confidence": 0.8926,
+    "healthy_confidence": 0.8926
+  },
+  "uncalibrated": {
+    "threshold": 0.55,
+    "scored_images": 118,
+    "top1_accuracy": 0.008,
+    "top3_accuracy": 0.102,
+    "coverage": 0.627,
+    "accepted_top1_accuracy": 0.014,
+    "abstention_rate": 0.373,
+    "confident_wrong_rate": 0.619,
+    "out_of_scope_images": 626,
+    "out_of_scope_confident_rate": 0.617
+  },
+  "calibrated": {
+    "threshold": 0.8926,
+    "scored_images": 118,
+    "top1_accuracy": 0.008,
+    "top3_accuracy": 0.102,
+    "coverage": 0.169,
+    "accepted_top1_accuracy": 0.0,
+    "abstention_rate": 0.831,
+    "confident_wrong_rate": 0.169,
+    "out_of_scope_images": 626,
+    "out_of_scope_confident_rate": 0.208
+  },
   "per_crop": {
     "corn": {
       "n": 16,
@@ -42,6 +67,8 @@
   "notes": [
     "Reference labels are free-text agronomist diagnoses mapped by keyword, not a 1:1 class set.",
     "Photos are farmer field photos (soil, shadows, multiple leaves), unlike PlantVillage.",
-    "unsupported_crop_confident_rate counts confident answers about crops not present in the photo."
+    "Top-1 accuracy does not improve with calibration: temperature scaling never changes the predicted class.",
+    "What calibration changes is coverage: how often the app abstains instead of naming a disease.",
+    "out_of_scope_confident_rate counts confident answers about crops absent from the model's class list."
   ]
 }

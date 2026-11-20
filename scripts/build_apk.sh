@@ -34,10 +34,10 @@ fi
 flutter pub get
 flutter analyze
 flutter build apk --release \
-  --build-name 1.4.0 --build-number 8 \
+  --build-name 1.4.1 --build-number 9 \
   --dart-define=AGRI_API_BASE_URL="${AGRI_API_BASE_URL:-http://10.0.2.2:8000}"
 
 mkdir -p "$REPO_ROOT/artifacts"
 cp build/app/outputs/flutter-apk/app-release.apk \
-  "$REPO_ROOT/artifacts/agrishield-1.4.0-universal.apk"
-echo "APK: artifacts/agrishield-1.4.0-universal.apk"
+  "$REPO_ROOT/artifacts/agrishield-1.4.1-universal.apk"
+echo "APK: artifacts/agrishield-1.4.1-universal.apk"

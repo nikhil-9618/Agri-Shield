@@ -1,5 +1,5 @@
 {
-  "size_bytes": 5185020,
+  "size_bytes": 4611780,
   "input_shape": [
     1,
     128,
@@ -9,7 +9,7 @@
   "input_dtype": "<class 'numpy.float32'>",
   "output_shape": [
     1,
-    27
+    38
   ],
   "output_dtype": "<class 'numpy.float32'>",
   "quantization": "float16",

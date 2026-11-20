@@ -1,0 +1,75 @@
+{
+  "fitted_at_utc": "2026-11-20T08:43:05Z",
+  "method": "temperature scaling on the validation split (NLL minimisation)",
+  "model": "mobile/assets/model/agrishield_model.tflite",
+  "class_count": 38,
+  "temperature": 0.875,
+  "min_confidence": 0.8926,
+  "healthy_confidence": 0.8926,
+  "abstention": {
+    "threshold": 0.8926,
+    "target_precision": 0.98,
+    "min_coverage": 0.6,
+    "target_met": true,
+    "measured_coverage": 0.7134,
+    "measured_precision": 0.9805,
+    "measured_recall": 0.7873
+  },
+  "healthy_rule": {
+    "threshold": 0.8926,
+    "target_precision": 0.95,
+    "target_met": true,
+    "measured_coverage": 0.8131,
+    "measured_precision": 0.993
+  },
+  "validation": {
+    "uncalibrated": {
+      "n": 3800,
+      "accuracy": 0.8884,
+      "nll": 0.3454,
+      "ece": 0.0212,
+      "mean_confidence": 0.8674,
+      "coverage_at_threshold": 0.6637,
+      "precision_at_threshold": 0.9861,
+      "confident_wrong_rate": 0.0195
+    },
+    "calibrated": {
+      "n": 3800,
+      "accuracy": 0.8884,
+      "nll": 0.3407,
+      "ece": 0.0154,
+      "mean_confidence": 0.8876,
+      "coverage_at_threshold": 0.7134,
+      "precision_at_threshold": 0.9805,
+      "confident_wrong_rate": 0.0226
+    }
+  },
+  "test": {
+    "uncalibrated": {
+      "n": 6388,
+      "accuracy": 0.8851,
+      "nll": 0.3683,
+      "ece": 0.0202,
+      "mean_confidence": 0.8649,
+      "coverage_at_threshold": 0.6534,
+      "precision_at_threshold": 0.9854,
+      "confident_wrong_rate": 0.0205
+    },
+    "calibrated": {
+      "n": 6388,
+      "accuracy": 0.8851,
+      "nll": 0.3649,
+      "ece": 0.0074,
+      "mean_confidence": 0.8862,
+      "coverage_at_threshold": 0.7015,
+      "precision_at_threshold": 0.9784,
+      "confident_wrong_rate": 0.0272
+    }
+  },
+  "notes": [
+    "Temperature scaling never changes the predicted class, only the confidence.",
+    "min_confidence is the lowest confidence that kept accepted-set precision at the target on validation.",
+    "healthy_confidence is stricter because a false 'healthy' verdict stops treatment.",
+    "Field photos remain out of distribution; these numbers are PlantVillage-only."
+  ]
+}

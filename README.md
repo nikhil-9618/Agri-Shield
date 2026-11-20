@@ -13,10 +13,11 @@ colour — green, yellow or red — with a plain-language explanation.
 | App | Flutter (Android), package `org.agrishield.agrishield` |
 | API | FastAPI + SQLAlchemy, SQLite by default / PostgreSQL supported |
 | Model | MobileNetV2 transfer learning on PlantVillage, 38 classes, 14 crops |
-| Test accuracy | **87.3%** top-1, **97.2%** top-3 on 6,388 held-out PlantVillage images |
-| Field accuracy | **not validated** — 0.8% top-1 agreement on 118 real field photos; see [docs/FIELD_VALIDATION.md](docs/FIELD_VALIDATION.md) |
-| APK (1.4.0, built locally) | `artifacts/agrishield-1.4.0-universal.apk` (58.9 MB, signed, arm64 + armv7 + x86_64) |
-| APK SHA-256 | `0cfad0e58be92d85208c187e5804fe9f19031491a89f7ad392a1ed9b6eedbac5` |
+| Test accuracy | **87.3%** top-1, **97.2%** top-3 on 6,388 held-out PlantVillage images (the float16 TFLite export measures 88.5% on the same split) |
+| Confidence | calibrated (temperature 0.875); a named disease is right **98%** of the time on validation — see [docs/CALIBRATION.md](docs/CALIBRATION.md) |
+| Field accuracy | **not validated** — 0.8% top-1 agreement on 118 real field photos, and the calibrated gate abstains on 83% of them; see [docs/FIELD_VALIDATION.md](docs/FIELD_VALIDATION.md) |
+| APK (1.4.1, built locally) | `artifacts/agrishield-1.4.1-universal.apk` (58.9 MB, signed, arm64 + armv7 + x86_64) |
+| APK SHA-256 | `d79cbd86bea002c96d705db567648ff1eb3af809bd1fd7972af1f8836a04d0c3` |
 | Published APK (1.3.0) | [agrishield-1.3.0-universal.apk](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk) (59.5 MB) |
 
 ## What a farmer does
@@ -67,7 +68,7 @@ Build the signed APK:
 
 ```bash
 ./scripts/build_apk.sh
-# -> artifacts/agrishield-1.4.0-universal.apk
+# -> artifacts/agrishield-1.4.1-universal.apk
 ```
 
 ### Installing on a phone
@@ -142,12 +143,12 @@ against the deployed URL with
 
 | Check | Result |
 | --- | --- |
-| Backend tests (`pytest`, 10 tests) | **10 passed** |
+| Backend tests (`pytest`, 16 tests) | **16 passed** |
 | `flutter analyze` | **0 issues** |
-| `flutter test` (translations, offline JSON) | **4 passed** |
+| `flutter test` (translations, offline JSON, leaf gate) | **8 passed** |
 | Release APK build | **succeeded**, 43.7 MB universal, signed (v2+v3), targetSdk 34 |
 | APK install + launch | **passed** on Android 7.0 (API 24) x86_64 emulator: `adb install` Success, no crash, screens rendered |
-| Model evaluation on held-out test set | **84.78%** top-1, 97.25% top-3 |
+| Model evaluation on held-out test set | **87.26%** top-1, 97.20% top-3 (Keras); 88.51% via the shipped TFLite file |
 | Render runtime (no TensorFlow, LiteRT) | **10 tests passed**, model loads, ~116 MB RSS |
 | Docker image build / live Render deploy | **not performed** (no Docker daemon or Render account here) |
 | Physical phone interaction | **not performed** (no physical device available) |

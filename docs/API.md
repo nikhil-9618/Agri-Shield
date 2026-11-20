@@ -122,9 +122,15 @@ Decision rules (server-side, in this order):
 
 | Condition | `status` | `level` |
 | --- | --- | --- |
-| top confidence < `MIN_CONFIDENCE` (0.55) | `unclear` | `yellow` |
-| healthy class and confidence >= `HEALTHY_CONFIDENCE` (0.60) | `diagnosed` | `green` |
+| top confidence < `min_confidence` | `unclear` | `yellow` |
+| healthy class and confidence >= `healthy_confidence` | `diagnosed` | `green` |
 | otherwise | `diagnosed` | red/yellow from the disease advisory severity |
+
+The thresholds are read from `ml/artifacts/calibration.json` (fitted on the
+validation split; currently `min_confidence` 0.8926 at 98% measured precision,
+temperature 0.875). `CONFIDENCE` environment variables are only the fallback
+used when that file is missing. Confidences in the response are
+temperature-scaled. See `docs/CALIBRATION.md`.
 
 `gradcam_base64` is `null` when Grad-CAM is disabled (`GRADCAM_ENABLED=false`)
 or the Keras model is unavailable. The app then hides the heat-map button.

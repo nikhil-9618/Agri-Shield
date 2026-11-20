@@ -118,9 +118,13 @@ async def predict(
     crop_key = prediction["crop"]
     healthy = bool(prediction["is_healthy"])
 
-    if confidence < settings.min_confidence:
+    # Thresholds come from calibration.json (fitted on the validation split)
+    # rather than hard-coded guesses, so the app and the API agree.
+    min_confidence = float(result.get("min_confidence", settings.min_confidence))
+    healthy_confidence = float(result.get("healthy_confidence", settings.healthy_confidence))
+    if confidence < min_confidence:
         level, diagnosis_status = "yellow", "unclear"
-    elif healthy and confidence >= settings.healthy_confidence:
+    elif healthy and confidence >= healthy_confidence:
         level, diagnosis_status = "green", "diagnosed"
     else:
         level, diagnosis_status = advisory.severity(disease_key), "diagnosed"

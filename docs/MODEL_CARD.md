@@ -4,7 +4,7 @@
 
 | Field | Value |
 | --- | --- |
-| Version | `agrishield-mobilenetv2-v2` (app 1.4.0) |
+| Version | `agrishield-mobilenetv2-v2` (app 1.4.1) |
 | Task | 38-class single-label classification of leaf photos (27 classes in v1) |
 | Crops | apple, blueberry, cherry, corn (maize), grape, orange, peach, bell pepper, potato, raspberry, soybean, squash, strawberry, tomato |
 | Architecture | MobileNetV2 (ImageNet weights) + global average pooling + dropout + dense softmax head |
@@ -121,7 +121,7 @@ python -m ml.training.evaluate --data /tmp/agrishield_dataset --model ml/artifac
 python -m ml.export.export_tflite --model ml/artifacts/agrishield_model.keras --out ml/artifacts/agrishield_model.tflite
 ```
 
-## v2 (app 1.4.0) — what changed
+## v2 (app 1.4.0–1.4.1) — what changed
 
 **The v1 inference pipeline was wrong, not the v1 model.** The exported graph
 contains `preprocess_input`, but the app, the API, Grad-CAM and evaluation all
@@ -150,13 +150,19 @@ Measured on the Digital Green expert-annotated set (989 Indian farmer photos,
 agronomist labels, CC-BY-4.0). Of 118 photos whose crop and condition map onto
 our classes:
 
-| Metric | Value |
-| --- | --- |
-| Top-1 agreement with mapped reference label | **0.008** |
-| Top-3 agreement | 0.102 |
-| Abstained (confidence < 0.55) | 0.466 |
-| Confidently wrong (confidence ≥ 0.80, wrong) | 0.195 |
-| Confident answer on out-of-scope crops | 0.55 |
+| Metric | Before calibration (0.55) | Calibrated (0.8926) |
+| --- | --- | --- |
+| Top-1 agreement with mapped reference label | **0.008** | 0.008 |
+| Top-3 agreement | 0.102 | 0.102 |
+| Abstained | 0.373 | **0.831** |
+| Answered and wrong | 0.619 | **0.169** |
+| Confident answer on out-of-scope crops | 0.617 | **0.208** |
+
+The gate is calibrated and fitted on validation data: temperature 0.875,
+`min_confidence` 0.8926 at 98% measured precision (test coverage 0.702,
+precision 0.978). It makes the model refuse most field photos instead of
+answering them wrongly; it does not make field photos diagnosable. Details in
+`docs/CALIBRATION.md`.
 
 PlantVillage accuracy does **not** transfer to field photos. The model was
 trained on lab-style single-leaf images and has not learned field backgrounds,
@@ -166,8 +172,11 @@ for method and caveats.
 
 ### Known limitations (v2)
 
-- No calibration: softmax confidence is not a probability of correctness.
-- No OOD score; the ML Kit leaf gate is the only "not a leaf" filter.
+- Confidence is calibrated (temperature scaling, ECE 0.020 → 0.007 on test),
+  but a softmax threshold is not an OOD detector: 21% of field photos of
+  unsupported crops still get a confident answer.
+- No OOD score; the ML Kit leaf gate is the only "not a leaf" filter. Entropy
+  and margin were measured and were redundant with confidence.
 - Closed set: anything outside the 38 classes is forced into one of them.
 - No pHash de-duplication across splits; PlantVillage test accuracy is
   probably optimistic.

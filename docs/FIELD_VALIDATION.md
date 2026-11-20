@@ -28,13 +28,30 @@ keyword-mapped reference, not a per-image clinical ground truth.
 
 ## Results
 
+Before calibration (the v1.4.0 thresholds):
+
 | Metric | Value | n |
 | --- | --- | --- |
 | Top-1 agreement with mapped label | **0.008** | 118 |
 | Top-3 agreement | 0.102 | 118 |
-| Abstention (confidence < 0.55) | 0.466 | 118 |
-| Confidently wrong (confidence ≥ 0.80) | 0.195 | 118 |
-| Confident answer on an out-of-scope crop | 0.55 | 626 |
+| Abstention (confidence < 0.55) | 0.373 | 118 |
+| Answered and wrong (confidence ≥ 0.55) | 0.619 | 118 |
+| Confident answer on an out-of-scope crop | 0.617 | 626 |
+
+After calibration (temperature 0.875, `min_confidence` 0.8926 — see
+`docs/CALIBRATION.md`):
+
+| Metric | Value | n |
+| --- | --- | --- |
+| Top-1 agreement with mapped label | 0.008 | 118 |
+| Top-3 agreement | 0.102 | 118 |
+| Abstention (confidence < 0.8926) | **0.831** | 118 |
+| Answered and wrong (confidence ≥ 0.8926) | **0.169** | 118 |
+| Confident answer on an out-of-scope crop | **0.208** | 626 |
+
+Calibration changes how often the app speaks, not what it gets right: it now
+refuses 83% of field photos and cuts confident answers about absent crops by
+two thirds. All 20 field photos it still answered were wrong.
 
 Per crop (scored photos): corn 16, potato 48, tomato 35, squash 9, pepper 8,
 soybean 1, strawberry 1. Top-1 was 0 for every crop except squash (1/9).
@@ -49,8 +66,9 @@ them wrong.
 
 Two things make this less bad than it looks, and neither makes it good enough:
 
-1. Nearly half of the scored photos were abstentions rather than wrong answers,
-   and the app shows "could not decide" for those.
+1. With calibration most scored photos are abstentions rather than wrong
+   answers (83% rather than 37%), and the app shows "could not decide" for
+   those.
 2. Part of the disagreement is label-mapping error: a photo labelled "early
    blight" on a whole plant is not the same task as a cropped single leaf.
 
@@ -79,5 +97,6 @@ python -c "from huggingface_hub import snapshot_download as s; s('DigiGreen/Crop
 python -m ml.validation.field_validation --data /tmp/digigreen \
     --model mobile/assets/model/agrishield_model.tflite \
     --labels mobile/assets/model/class_names.json \
+    --calibration ml/artifacts/calibration.json \
     --out docs/field_validation.json
 ```

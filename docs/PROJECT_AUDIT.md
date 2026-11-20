@@ -49,7 +49,8 @@ bypass the leaf check.
 | 5 | No parity test between Keras and TFLite | bug shipped unnoticed | test added |
 | 6 | Only 6 of 14 PlantVillage crops shipped | "unknown crop" for cherry, peach, strawberry, citrus | fixed (38 classes) |
 | 7 | Advisory fallback shows raw class keys | unreadable output for a missing advisory | mitigated (all 38 classes now have one) |
-| 8 | No calibration or OOD score | confidence is not a correctness probability | open |
+| 8 | No calibration | confidence was not a correctness probability; 0.55 was invented | fixed (`docs/CALIBRATION.md`) |
+| 9 | No OOD score | 21% of field photos of unsupported crops still get a confident answer | open (entropy/margin measured as redundant) |
 
 ## Things that were already correct
 

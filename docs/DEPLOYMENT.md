@@ -25,6 +25,8 @@ MODEL_PATH=ml/artifacts/agrishield_model.tflite
 KERAS_MODEL_PATH=ml/artifacts/agrishield_model.keras
 GRADCAM_ENABLED=true
 MAX_UPLOAD_MB=8
+# Fallbacks only: the shipped thresholds come from
+# ml/artifacts/calibration.json, which must be deployed with the model.
 MIN_CONFIDENCE=0.55
 HEALTHY_CONFIDENCE=0.60
 ```

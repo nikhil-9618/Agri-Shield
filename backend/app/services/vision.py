@@ -30,6 +30,25 @@ MAX_DIMENSION = 1600
 MIN_DIMENSION = 96
 
 
+def apply_temperature(probs: np.ndarray, temperature: float) -> np.ndarray:
+    """Temperature-scale softmax probabilities.
+
+    Mirrors ``ml/calibration/calibration.py`` (a test keeps the two identical).
+    It is duplicated deliberately: the API container ships the model artifacts
+    without the training package, so importing ``ml`` here would break deploys.
+    The softmax argmax is invariant, so predictions do not change; only the
+    confidence becomes meaningful enough to abstain on.
+    """
+    if not temperature or not np.isfinite(temperature) or temperature <= 0:
+        return probs
+    if temperature == 1.0:
+        return probs
+    logits = np.log(np.clip(probs, 1e-12, None)) / float(temperature)
+    logits -= logits.max()
+    exp = np.exp(logits)
+    return (exp / exp.sum()).astype(np.float32)
+
+
 class InvalidImageError(ValueError):
     pass
 
@@ -70,6 +89,10 @@ class VisionService:
         self.input_size = 128
         self.model_version = "unavailable"
         self.load_error: str | None = None
+        # Calibrated confidence settings; overridden by calibration.json.
+        self.temperature = 1.0
+        self.min_confidence = settings.min_confidence
+        self.healthy_confidence = settings.healthy_confidence
         self._keras_model = None
         self._keras_error: str | None = None
         self._load()
@@ -104,7 +127,33 @@ class VisionService:
 
             return tf.lite.Interpreter(model_path=model_path, num_threads=num_threads)
 
+    def _load_calibration(self) -> None:
+        path = settings.calibration_file
+        if not path.exists():
+            logger.info("No calibration file at %s; serving raw softmax confidence", path)
+            return
+        try:
+            data = json.loads(path.read_text("utf-8"))
+            temperature = float(data.get("temperature", 1.0))
+            if not np.isfinite(temperature) or temperature <= 0:
+                raise ValueError(f"invalid temperature {temperature!r}")
+            self.temperature = temperature
+            self.min_confidence = float(data.get("min_confidence", settings.min_confidence))
+            self.healthy_confidence = float(
+                data.get("healthy_confidence", settings.healthy_confidence)
+            )
+            logger.info(
+                "Calibration: T=%.3f, min=%.3f, healthy=%.3f",
+                self.temperature,
+                self.min_confidence,
+                self.healthy_confidence,
+            )
+        except Exception as exc:
+            # Never fail inference over calibration metadata; fall back to raw.
+            logger.warning("Could not read calibration (%s); using raw confidence", exc)
+
     def _load(self) -> None:
+        self._load_calibration()
         try:
             self.classes = json.loads(settings.class_names_file.read_text("utf-8"))
         except Exception as exc:  # pragma: no cover - missing artifact
@@ -165,6 +214,7 @@ class VisionService:
             self.interpreter.invoke()
             probs = np.array(self.interpreter.get_tensor(self.output_detail["index"]))[0]
 
+        probs = apply_temperature(probs, self.temperature)
         order = np.argsort(probs)[::-1][:3]
         top3 = []
         for idx in order:
@@ -183,6 +233,10 @@ class VisionService:
             "prediction": top3[0],
             "pred_index": int(order[0]),
             "model_version": self.model_version,
+            # Calibrated: the numbers the abstention rules compare against.
+            "temperature": self.temperature,
+            "min_confidence": self.min_confidence,
+            "healthy_confidence": self.healthy_confidence,
         }
 
     # -------------------------------------------------------------- gradcam

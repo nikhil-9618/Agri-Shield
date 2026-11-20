@@ -20,7 +20,7 @@ v1.3.0 bug ship:
 `ml/training/retrain.py` refuses to save a model below 0.80 test accuracy or
 one that ignores its input.
 
-### Backend — 12 tests passing
+### Backend — 16 tests passing
 
 ```bash
 cd backend && ../.venv/bin/python -m pytest tests -q
@@ -82,7 +82,7 @@ Produced `ml/artifacts/evaluation/metrics_test.json`:
 The Docker image installs `backend/requirements-render.txt`, where
 `ai-edge-litert` replaces TensorFlow. Verified in a clean virtualenv:
 
-- `pytest` → **12 passed** in 2.1 s (same tests, real TFLite model);
+- `pytest` → **16 passed** in 2.1 s (same tests, real TFLite model, calibrated confidence);
 - uvicorn started with `APP_ENV=production`, `GRADCAM_ENABLED=false`;
 - `/health` returned `model_loaded: true`;
 - a real PlantVillage test image was predicted as `corn_maize_common_rust`
@@ -97,7 +97,7 @@ The Docker image installs `backend/requirements-render.txt`, where
 # Built build/app/outputs/flutter-apk/app-release.apk (59.5MB)
 ```
 
-`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.4.0
+`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.4.1
 (code 7), minSdk 24, targetSdk 34, native ABIs `arm64-v8a`, `armeabi-v7a` and
 `x86_64`, and the camera/microphone/location/internet permissions.
 `apksigner verify` confirms v2 and v3 signatures with the release key; ZIP

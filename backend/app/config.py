@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     model_path: str = "ml/artifacts/agrishield_model.tflite"
     keras_model_path: str = "ml/artifacts/agrishield_model.keras"
     class_names_path: str = "ml/artifacts/class_names.json"
+    calibration_path: str = "ml/artifacts/calibration.json"
     advisory_dir: str = "advisory"
     upload_dir: str = "backend/uploads"
 
@@ -70,6 +71,10 @@ class Settings(BaseSettings):
     @property
     def class_names_file(self) -> Path:
         return self.resolve(self.class_names_path)
+
+    @property
+    def calibration_file(self) -> Path:
+        return self.resolve(self.calibration_path)
 
     @property
     def advisory_path(self) -> Path:

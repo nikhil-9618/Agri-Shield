@@ -54,7 +54,8 @@
 The same 5 MB float16 MobileNetV2 model is bundled in the APK and run by
 `tflite_flutter` on the phone. Diagnosis therefore needs no connection, no
 account and no server round trip. The on-device path uses the same 128×128
-[-1, 1] preprocessing and the same 0.55/0.60 confidence thresholds as the API.
+raw 0-255 preprocessing, the same temperature-scaled confidence and the same
+thresholds from `calibration.json` as the API.
 
 The FastAPI service remains the fallback for devices where the model cannot
 load, and it serves Grad-CAM, weather, the voice assistant and cross-device

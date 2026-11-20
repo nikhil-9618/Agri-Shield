@@ -95,21 +95,76 @@ def reference_key(crop: str, diagnosis: str, healthy_keys: dict[str, str]) -> st
     return None
 
 
+def summarise(rows: list[dict], threshold: float) -> dict:
+    """Agronomist-agreement metrics for one confidence threshold."""
+    covered = [r for r in rows if r["ref"]]
+    unsupported = [r for r in rows if r["crop"] is None]
+
+    correct1 = sum(r["top"] == r["ref"] for r in covered)
+    correct3 = sum(r["ref"] in r["top3"] for r in covered)
+    abstained = sum(r["conf"] < threshold for r in covered)
+    accepted = [r for r in covered if r["conf"] >= threshold]
+    # "Confident and wrong" is measured at the threshold that actually ships,
+    # so it reflects what the farmer would have been told.
+    confident_wrong = sum(
+        r["top"] != r["ref"] and r["conf"] >= threshold for r in covered
+    )
+    # A confident answer about a crop the farmer did not photograph is the
+    # clearest form of "guessing", so it is measured separately.
+    unsupported_confident = sum(
+        r["conf"] >= threshold and r["top_crop"] != r["crop"] for r in unsupported
+    )
+
+    return {
+        "threshold": round(threshold, 4),
+        "scored_images": len(covered),
+        "top1_accuracy": round(correct1 / len(covered), 3) if covered else None,
+        "top3_accuracy": round(correct3 / len(covered), 3) if covered else None,
+        "coverage": round(len(accepted) / len(covered), 3) if covered else None,
+        "accepted_top1_accuracy": round(
+            sum(r["top"] == r["ref"] for r in accepted) / len(accepted), 3
+        )
+        if accepted
+        else None,
+        "abstention_rate": round(abstained / len(covered), 3) if covered else None,
+        "confident_wrong_rate": round(confident_wrong / len(covered), 3)
+        if covered
+        else None,
+        "out_of_scope_images": len(unsupported),
+        "out_of_scope_confident_rate": round(
+            unsupported_confident / len(unsupported), 3
+        )
+        if unsupported
+        else None,
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default="/tmp/digigreen")
     ap.add_argument("--model", default="mobile/assets/model/agrishield_model.tflite")
     ap.add_argument("--labels", default="mobile/assets/model/class_names.json")
+    ap.add_argument("--calibration", default="ml/artifacts/calibration.json")
     ap.add_argument("--out", default="docs/field_validation.json")
-    ap.add_argument("--min-confidence", type=float, default=0.55)
+    ap.add_argument(
+        "--legacy-threshold",
+        type=float,
+        default=0.55,
+        help="pre-calibration threshold, reported for comparison",
+    )
     args = ap.parse_args()
 
     from ai_edge_litert.interpreter import Interpreter
+
+    from ml.calibration.calibration import apply_temperature, load_calibration
 
     labels = json.loads(Path(args.labels).read_text())
     healthy_keys = {c["crop"]: c["key"] for c in labels if c["is_healthy"]}
     key_of_index = {c["index"]: c["key"] for c in labels}
     crop_of_key = {c["key"]: c["crop"] for c in labels}
+    calibration = load_calibration(args.calibration)
+    temperature = float(calibration["temperature"])
+    fitted_threshold = float(calibration["min_confidence"])
 
     it = Interpreter(model_path=args.model)
     it.allocate_tensors()
@@ -122,75 +177,63 @@ def main() -> int:
     for row in rows:
         by_image[row["image_file"]].append(row)
 
-    scored = correct1 = correct3 = 0
-    covered = 0
-    abstained = 0
-    confident_wrong = 0
-    per_crop: dict[str, dict[str, int]] = defaultdict(lambda: {"n": 0, "top1": 0})
-    unsupported_confident = 0
-    unsupported = 0
-    skipped_crop = 0
-
+    records: list[dict] = []
     for image_file, anns in sorted(by_image.items()):
-        crop_raw = anns[0]["crop"].strip().lower()
-        crop = CROP_ALIASES.get(crop_raw)
         path = Path(args.data) / image_file
         if not path.exists():
             continue
-        if crop is None:
-            unsupported += 1
+        crop = CROP_ALIASES.get(anns[0]["crop"].strip().lower())
         arr = np.asarray(
             Image.open(path).convert("RGB").resize((size, size), Image.BILINEAR),
             dtype=np.float32,
         )
         it.set_tensor(inp["index"], arr.reshape(1, size, size, 3))
         it.invoke()
-        probs = it.get_tensor(out["index"])[0]
+        probs = apply_temperature(
+            np.asarray(it.get_tensor(out["index"]))[0], temperature
+        )
         order = np.argsort(probs)[::-1]
         top = key_of_index[int(order[0])]
-        conf = float(probs[order[0]])
-        top3 = [key_of_index[int(i)] for i in order[:3]]
-
-        if crop is None:
-            if conf >= args.min_confidence and crop_of_key.get(top) not in (None, crop):
-                # Model answered confidently about a crop the farmer did not photograph.
-                unsupported_confident += 1
-            continue
 
         ref = None
-        for ann in anns:
-            ref = reference_key(crop, ann["diagnosis"], healthy_keys)
-            if ref:
-                break
-        if not ref:
-            skipped_crop += 1
-            continue
+        if crop is not None:
+            for ann in anns:
+                ref = reference_key(crop, ann["diagnosis"], healthy_keys)
+                if ref:
+                    break
 
-        covered += 1
-        per_crop[crop]["n"] += 1
-        if conf < args.min_confidence:
-            abstained += 1
-        if top == ref:
-            correct1 += 1
-            per_crop[crop]["top1"] += 1
-        elif conf >= 0.80:
-            confident_wrong += 1
-        if ref in top3:
-            correct3 += 1
+        records.append(
+            {
+                "crop": crop,
+                "ref": ref,
+                "conf": float(probs[order[0]]),
+                "top": top,
+                "top_crop": crop_of_key.get(top),
+                "top3": [key_of_index[int(i)] for i in order[:3]],
+            }
+        )
 
+    per_crop: dict[str, dict[str, int]] = defaultdict(lambda: {"n": 0, "top1": 0})
+    for r in records:
+        if r["crop"] and r["ref"]:
+            per_crop[r["crop"]]["n"] += 1
+            per_crop[r["crop"]]["top1"] += r["top"] == r["ref"]
+
+    unmapped = sum(1 for r in records if r["crop"] is not None and not r["ref"])
     report = {
         "dataset": "Digital Green Crop Disease Expert Annotations (CC-BY-4.0)",
         "images_in_dataset": len(by_image),
-        "scored_images": covered,
-        "out_of_scope_images": unsupported,
-        "unmapped_label_images": skipped_crop,
-        "top1_accuracy": round(correct1 / covered, 3) if covered else None,
-        "top3_accuracy": round(correct3 / covered, 3) if covered else None,
-        "abstention_rate": round(abstained / covered, 3) if covered else None,
-        "confident_wrong_rate": round(confident_wrong / covered, 3) if covered else None,
-        "unsupported_crop_confident_rate": round(unsupported_confident / unsupported, 3)
-        if unsupported
-        else None,
+        "scored_images": sum(1 for r in records if r["ref"]),
+        "out_of_scope_images": sum(1 for r in records if r["crop"] is None),
+        "unmapped_label_images": unmapped,
+        "calibration": {
+            "source": args.calibration if Path(args.calibration).exists() else "defaults",
+            "temperature": temperature,
+            "min_confidence": fitted_threshold,
+            "healthy_confidence": float(calibration["healthy_confidence"]),
+        },
+        "uncalibrated": summarise(records, args.legacy_threshold),
+        "calibrated": summarise(records, fitted_threshold),
         "per_crop": {
             crop: {"n": v["n"], "top1": round(v["top1"] / v["n"], 3)}
             for crop, v in sorted(per_crop.items())
@@ -199,7 +242,9 @@ def main() -> int:
         "notes": [
             "Reference labels are free-text agronomist diagnoses mapped by keyword, not a 1:1 class set.",
             "Photos are farmer field photos (soil, shadows, multiple leaves), unlike PlantVillage.",
-            "unsupported_crop_confident_rate counts confident answers about crops not present in the photo.",
+            "Top-1 accuracy does not improve with calibration: temperature scaling never changes the predicted class.",
+            "What calibration changes is coverage: how often the app abstains instead of naming a disease.",
+            "out_of_scope_confident_rate counts confident answers about crops absent from the model's class list.",
         ],
     }
     Path(args.out).write_text(json.dumps(report, indent=2))
