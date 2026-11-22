@@ -26,6 +26,27 @@ WEATHER_KEYWORDS = [
 ]
 
 
+def _contains_keyword(text: str, keyword: str) -> bool:
+    """Whole-word match for Latin keywords, substring for Indic scripts.
+
+    Substring matching answered "water-soaked patches" (late blight) with the
+    watering FAQ, because ``"water" in question`` is true there.
+    """
+    keyword = keyword.strip().lower()
+    if not keyword:
+        return False
+    if re.fullmatch(r"[a-z0-9 ]+", keyword):
+        # Hyphens count as word characters, so "water" does not match
+        # "water-soaked" but still matches "water my plants".
+        return (
+            re.search(
+                rf"(?<![a-z0-9-]){re.escape(keyword)}(?![a-z0-9-])", text
+            )
+            is not None
+        )
+    return keyword in text
+
+
 def detect_language(text: str) -> str:
     """Detect the script of the question; English is the default."""
     for lang, (start, end) in LANGUAGE_SCRIPTS.items():
@@ -43,7 +64,7 @@ class AssistantService:
         best: tuple[int, dict[str, Any]] | None = None
         q = question.lower()
         for intent in self.advisory.faq["intents"]:
-            hits = sum(1 for kw in intent["keywords"] if kw.lower() in q)
+            hits = sum(1 for kw in intent["keywords"] if _contains_keyword(q, kw))
             if hits and (best is None or hits > best[0]):
                 best = (hits, intent)
         return best[1] if best else None
@@ -62,7 +83,7 @@ class AssistantService:
         answer: str | None = None
 
         # 1. Weather questions -------------------------------------------------
-        is_weather = any(kw in q for kw in WEATHER_KEYWORDS)
+        is_weather = any(_contains_keyword(q, kw) for kw in WEATHER_KEYWORDS)
         if is_weather:
             used_weather = True
             if latitude is not None and longitude is not None:
@@ -89,25 +110,24 @@ class AssistantService:
                 answer = self.advisory.t("weather_need_location", lang)
 
         # 2. Disease questions -------------------------------------------------
+        disease_key: str | None = None
+        intent: dict[str, Any] | None = None
         if answer is None:
             disease_key = self.advisory.find_disease_in_text(question, lang)
-            if disease_key:
-                block = self.advisory.localised(disease_key, lang)
-                crop = self.advisory.crop_name(self.advisory.crop_of(disease_key), lang)
-                answer = (
-                    f"{crop}: {block['name']}. {block['signs']} {block['do_now']} "
-                    f"{block['expert']}"
-                )
-                sources.append(
-                    {
-                        "title": f"{self.advisory.t('advisory_source', lang)} — {block['name']}",
-                        "reference": f"advisory/diseases/{disease_key}.json",
-                    }
-                )
+            intent = self._match_intent(question)
+            # "Why are my leaves yellow?" is general advice, not a diagnosis,
+            # so a matching FAQ wins when no crop is named. A named crop means
+            # the farmer is asking about that crop's disease.
+            if disease_key and not self.advisory.crops_in_text(question) and intent:
+                disease_key = None
+        if answer is None and disease_key:
+            answer, source = self._advisory_answer(disease_key, lang)
+            sources.append(source)
 
         # 3. FAQ intents -------------------------------------------------------
         if answer is None:
-            intent = self._match_intent(question)
+            if intent is None:
+                intent = self._match_intent(question)
             if intent:
                 answer = intent["answer"].get(lang) or intent["answer"]["en"]
                 sources.append(
@@ -117,7 +137,34 @@ class AssistantService:
                     }
                 )
 
-        # 4. Honest fallback ---------------------------------------------------
+        # 4. Several reviewed advisories fit the named crop --------------------
+        # "Brown spots on tomato" could be early blight, target spot or several
+        # others. Listing them with their distinguishing signs is more useful
+        # than guessing one, and stays inside reviewed content.
+        if answer is None and intent is None:
+            candidates = self.advisory.candidate_diseases(question, lang)
+            # One reviewed advisory fits the signs: answer it. Several fit:
+            # list them with their distinguishing signs rather than guessing.
+            if len(candidates) == 1:
+                answer, source = self._advisory_answer(candidates[0]["key"], lang)
+                sources.append(source)
+            elif candidates:
+                crop = self.advisory.crop_name(
+                    self.advisory.crop_of(candidates[0]["key"]), lang
+                )
+                listing = " ".join(
+                    f"{index}) {item['name']} — {item['signs']}"
+                    for index, item in enumerate(candidates, start=1)
+                )
+                answer = self.advisory.t(
+                    "disease_possibilities", lang, crop=crop, list=listing
+                )
+                for item in candidates:
+                    sources.append(
+                        self._advisory_source(item["name"], item["key"], lang)
+                    )
+
+        # 5. Honest fallback ---------------------------------------------------
         if answer is None:
             answer = self.advisory.faq["fallback"].get(lang, self.advisory.faq["fallback"]["en"])
 
@@ -129,6 +176,25 @@ class AssistantService:
             "follow_ups": follow_ups,
             "used_weather": used_weather,
             "disclaimer": self.advisory.t("disclaimer", lang),
+        }
+
+    # ----------------------------------------------------------- answer parts
+    def _advisory_answer(self, key: str, lang: str) -> tuple[str, dict[str, str]]:
+        """The reviewed answer text and source entry for one disease advisory."""
+        block = self.advisory.localised(key, lang)
+        crop = self.advisory.crop_name(self.advisory.crop_of(key), lang)
+        text = (
+            f"{crop}: {block['name']}. {block['signs']} {block['do_now']} "
+            f"{block['expert']}"
+        )
+        return text, self._advisory_source(block["name"], key, lang)
+
+    def _advisory_source(
+        self, name: str, key: str, lang: str
+    ) -> dict[str, str]:
+        return {
+            "title": f"{self.advisory.t('advisory_source', lang)} — {name}",
+            "reference": f"advisory/diseases/{key}.json",
         }
 
     @staticmethod

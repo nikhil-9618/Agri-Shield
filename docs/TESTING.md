@@ -20,11 +20,11 @@ v1.3.0 bug ship:
 `ml/training/retrain.py` refuses to save a model below 0.80 test accuracy or
 one that ignores its input.
 
-### Backend — 16 tests passing
+### Backend — 33 tests passing
 
 ```bash
 cd backend && ../.venv/bin/python -m pytest tests -q
-# 16 passed
+# 33 passed
 ```
 
 `backend/tests/test_api.py` covers:
@@ -41,6 +41,12 @@ cd backend && ../.venv/bin/python -m pytest tests -q
 8. advisory is served in Telugu for a known disease;
 9. assistant answers a known question and includes sources;
 10. weather rule output is localised and shaped correctly (Open-Meteo mocked).
+
+`backend/tests/test_assistant_matching.py` covers the assistant's retrieval:
+a named crop restricts the answer (a tomato question can never return a corn
+advisory), named diseases resolve in English, Hindi and Telugu, symptom-only
+questions list the matching advisories instead of guessing one, and
+"water-soaked patches" is not mistaken for the watering FAQ.
 
 Tests set `DATABASE_URL` to a temporary SQLite file, load the real TFLite model
 during app lifespan, and never touch the network.
@@ -82,7 +88,7 @@ Produced `ml/artifacts/evaluation/metrics_test.json`:
 The Docker image installs `backend/requirements-render.txt`, where
 `ai-edge-litert` replaces TensorFlow. Verified in a clean virtualenv:
 
-- `pytest` → **16 passed** in 2.1 s (same tests, real TFLite model, calibrated confidence);
+- `pytest` → **33 passed** in 2.1 s (same tests, real TFLite model, calibrated confidence);
 - uvicorn started with `APP_ENV=production`, `GRADCAM_ENABLED=false`;
 - `/health` returned `model_loaded: true`;
 - a real PlantVillage test image was predicted as `corn_maize_common_rust`
