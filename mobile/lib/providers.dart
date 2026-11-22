@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -266,6 +267,7 @@ class AppController extends Notifier<AppState> {
       );
     }
 
+    var modelFailed = false;
     try {
       final diagnosis = await _onDevice.classify(
         await image.readAsBytes(),
@@ -278,13 +280,33 @@ class AppController extends Notifier<AppState> {
       if (e.code == 'invalid_image') {
         throw ApiException('invalid_image', e.message, 422);
       }
-      // Model unavailable on this device: try the API below.
-    } catch (_) {
+      // Model unavailable on this device: try the API below. Log it so a
+      // failing on-device model is diagnosable from a release build.
+      modelFailed = true;
+      debugPrint('AgriShield: on-device model unavailable (${e.code}): ${e.message}');
+    } catch (e, stack) {
       // Unexpected on-device failure: try the API below rather than guessing.
+      modelFailed = true;
+      debugPrint('AgriShield: on-device classification failed: $e\n$stack');
     }
 
     final online = await ensureAccount();
     if (!online) {
+      // Queueing only helps when the phone can diagnose later. If the bundled
+      // model cannot run at all, say so instead of showing a fake "offline"
+      // message that leaves the farmer waiting forever.
+      if (modelFailed) {
+        try {
+          await File(localPath).delete();
+        } catch (_) {
+          // best-effort cleanup
+        }
+        throw ApiException(
+          'model_unavailable',
+          'This phone could not run the on-device model. Update Android to 8.0 or newer, or connect to the internet.',
+          0,
+        );
+      }
       await _enqueue(localPath, lang);
       return null;
     }

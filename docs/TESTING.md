@@ -2,11 +2,11 @@
 
 ## Automated checks (run in this repository)
 
-### Model — 3 tests passing
+### Model — 9 tests passing
 
 ```bash
-python -m pytest ml/tests -q
-# 3 passed
+.venv-tflite/bin/python -m pytest ml/tests -q
+# 9 passed
 ```
 
 `ml/tests/test_tflite_parity.py` enforces the properties whose absence let the
@@ -24,7 +24,7 @@ one that ignores its input.
 
 ```bash
 cd backend && ../.venv/bin/python -m pytest tests -q
-# 12 passed, 2 warnings in ~2 s
+# 16 passed
 ```
 
 `backend/tests/test_api.py` covers:
@@ -50,7 +50,7 @@ during app lifespan, and never touch the network.
 ```bash
 cd mobile
 flutter analyze     # No issues found!
-flutter test        # 4 tests passed
+flutter test        # 8 tests passed
 ```
 
 - `test/core_test.dart` checks that all five languages contain the core farmer
@@ -97,8 +97,8 @@ The Docker image installs `backend/requirements-render.txt`, where
 # Built build/app/outputs/flutter-apk/app-release.apk (59.5MB)
 ```
 
-`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.4.1
-(code 7), minSdk 24, targetSdk 34, native ABIs `arm64-v8a`, `armeabi-v7a` and
+`aapt dump badging` confirms package `org.agrishield.agrishield`, version 1.4.3
+(code 11), minSdk 26, targetSdk 34, native ABIs `arm64-v8a`, `armeabi-v7a` and
 `x86_64`, and the camera/microphone/location/internet permissions.
 `apksigner verify` confirms v2 and v3 signatures with the release key; ZIP
 integrity and 16 KB alignment also pass.
@@ -128,11 +128,56 @@ The real model was also run on the API 24 emulator against two photos:
 - a tomato late-blight leaf returned `leaf=true`, with `plant 0.63` and
   `twig 0.36`, so it proceeded to diagnosis.
 
+### v1.4.3 — Android version floor (fixed bug)
+
+**Symptom on a real Android 7.0 (API 24) device/emulator with the shipped
+1.4.2 APK:** picking a leaf photo showed "No internet right now. We will check
+the photo when you are back online." The photo was queued instead of diagnosed,
+even offline where on-device inference should have handled it.
+
+**Root cause.** logcat showed:
+
+```
+TFLite interpreter load failed: Invalid argument(s): Failed to load dynamic
+library 'libtensorflowlite_jni.so': dlopen failed: cannot locate symbol
+"strtod_l" referenced by ".../libtensorflowlite_jni.so"
+```
+
+The bundled LiteRT 1.4.0 `libtensorflowlite_jni.so` has an undefined reference
+to `strtod_l`, which only exists from Android 8.0 (API 26). Its AAR manifest
+claims `minSdkVersion 21`, but the native binary does not load on API 24/25.
+The app therefore declared minSdk 24 while its model could never load there,
+and the failure was silently swallowed by the cloud fallback, which then failed
+with no network.
+
+**Fix.**
+
+1. `mobile/android/app/build.gradle.kts` now sets `minSdk = 26`, matching the
+   real floor of the inference runtime, so Play/`adb install` refuse API 24/25
+   instead of shipping a broken install.
+2. The TFLite load failure is logged (`AgriShield: TFLite interpreter load
+   failed: ...`) and recorded in a `modelFailed` flag.
+3. If the model cannot load *and* the cloud API is unreachable, `diagnose` now
+   throws `ApiException('model_unavailable', ...)` with the message "This phone
+   could not run the on-device model. Update Android to 8.0 or newer, or connect
+to the internet." instead of the misleading offline-queue screen. No photo is
+   queued that the device can never process.
+
+**Verification.** The fixed 1.4.3 APK was installed on an API 30 (Android 11)
+x86_64 emulator and driven through onboarding and the gallery picker with
+test-leaf.jpg. The result screen rendered "Late blight", confidence 77%, the
+advice-status banner and the low-clarity advisory, i.e. the on-device model
+loaded and ran. logcat contained `Initialized TensorFlow Lite runtime.` twice
+and no libtensorflowlite load error. Artifacts: `artifacts/test/a30_result*`,
+`a30_picker*`, `a30_after_key*`.
+
 ## Not tested (important)
 
 - **No physical Android phone was available**, so installation on the farmer's
-  actual handset and a real-device camera/voice run were not performed. The APK
-  was installed and launched on an API 24 emulator (see above).
+  actual handset and a real-device camera/voice run were not performed. The
+  1.4.3 APK was installed and driven on API 30 emulators (see the v1.4.3
+  section above); the earlier 1.3.0 walkthrough used an API 24 emulator, which
+  is now below the supported floor.
 - Camera capture, TTS voices, speech-to-text and GPS permission flows were not
   exercised end-to-end; the emulator has no camera/voice hardware configured.
   The leaf gate itself was run on-device with a portrait and a leaf photo, but

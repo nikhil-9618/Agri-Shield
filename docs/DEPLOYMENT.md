@@ -118,7 +118,7 @@ pilot APK can reach a LAN server over HTTP. Before public distribution:
 
 ### Phone prerequisites
 
-- Android 7.0+ (minSdk 24), camera, ~60 MB free.
+- Android 8.0+ (minSdk 26), camera, ~60 MB free.
 - Google TTS voice for the chosen language (Android usually prompts to install
   it). Without it, all text is still visible.
 - Google speech recognition service for voice questions; prepared question

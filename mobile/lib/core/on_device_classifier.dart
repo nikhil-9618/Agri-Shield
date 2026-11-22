@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -83,8 +83,11 @@ class OnDeviceClassifier {
         modelAsset,
         options: InterpreterOptions()..threads = 4,
       );
-    } catch (_) {
+    } catch (e, stack) {
       _loading = null;
+      // Keep the farmer-facing text plain, but leave the native reason in the
+      // log so a failed model load is diagnosable from a release build.
+      debugPrint('AgriShield: TFLite interpreter load failed: $e\n$stack');
       throw const OnDeviceException(
         'model_unavailable',
         'The on-device model could not be loaded.',

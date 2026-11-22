@@ -337,13 +337,13 @@ AgriShield provides a universal Android APK.
 | Application | AgriShield |
 | Package ID | org.agrishield.agrishield |
 | Platform | Android |
-| Minimum Android Version | Android 7.0 |
+| Minimum Android Version | Android 8.0 |
 | Architecture | ARM64, ARMv7, x86_64 |
 | Distribution | Universal APK |
 
 ### Download
 
-[Download AgriShield Android APK – Version 1.3.0](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.3.0/agrishield-1.3.0-universal.apk)
+[Download AgriShield Android APK – Version 1.4.3](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.4.3/agrishield-1.4.3-universal.apk)
 
 [View All Releases](https://github.com/nikhil-9618/Agri-Shield/releases)
 

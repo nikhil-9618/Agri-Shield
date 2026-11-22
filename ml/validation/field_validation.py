@@ -68,7 +68,7 @@ CONDITIONS = [
     (r"northern leaf blight|leaf blight", "corn", "corn_maize_northern_leaf_blight"),
     (r"grey leaf spot|gray leaf spot|cercospora", "corn", "corn_maize_cercospora_leaf_spot_gray_leaf_spot"),
     (r"powdery mildew", "squash", "squash_powdery_mildew"),
-    (r"powdery mildew", "cherry", "cherry_powdery_mildew"),
+    (r"powdery mildew", "cherry", "cherry_including_sour_powdery_mildew"),
     (r"leaf scorch|scorch", "strawberry", "strawberry_leaf_scorch"),
     (r"black rot", "grape", "grape_black_rot"),
     (r"black rot", "apple", "apple_black_rot"),
