@@ -343,10 +343,10 @@ AgriShield provides a universal Android APK.
 
 ### Download
 
-[Download AgriShield Android APK – Version 1.4.3](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.4.3/agrishield-1.4.3-universal.apk)
+[Download AgriShield Android APK – Version 1.4.4](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.4.4/agrishield-1.4.4-universal.apk)
 
-Size: 58,902,009 bytes · SHA-256:
-`dba967570c88a71a48efaa4dcc244ba1917cd9c4e807bb8ff284c7e75be4e5e3`
+Size: 58,960,046 bytes · SHA-256:
+`df1b7d2a03edd90f09c9dffbef87f5c4bea204ab4c6f5f57430558d51c0af5f0`
 
 [View All Releases](https://github.com/nikhil-9618/Agri-Shield/releases)
 
@@ -378,6 +378,33 @@ AgriShield uses a FastAPI backend for server-dependent functionality.
 Detailed documentation:
 
 `docs/API.md`
+
+### Point the app at your own backend
+
+The APK ships **without** a server address, so weather and the assistant are
+off until you host the API and tell the app where it is. You can do that from
+the phone, no rebuild needed:
+
+1. Open the menu (☰) and tap **Server** (also reachable from **My details**,
+   or from the **Set up server** button shown when weather or the assistant
+   cannot connect).
+2. Type the address, for example `https://api.example.org` or
+   `http://192.168.1.5:8000` for a laptop on the same Wi-Fi. A missing `http://`
+   is added for you; a trailing slash is removed.
+3. Tap **Test server** — it calls `GET /health` and reports whether the API and
+   its model are ready.
+4. Tap **Use this server**. The app saves the address and silently creates an
+   account on that server. Accounts from a previous server are discarded, since
+   they do not exist on the new one.
+
+To bake the address into a build instead:
+
+```bash
+AGRI_API_BASE_URL=https://api.example.org ./scripts/build_apk.sh
+```
+
+On-device leaf diagnosis, saved history and cached advisories keep working with
+no server at all.
 
 ---
 

@@ -16,6 +16,7 @@ import 'screens/home_screen.dart';
 import 'screens/language_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/result_screen.dart';
+import 'screens/server_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/voice_screen.dart';
 import 'screens/weather_screen.dart';
@@ -51,6 +52,7 @@ GoRouter buildRouter(String initialLocation) => GoRouter(
         GoRoute(path: '/history', builder: (_, _) => const HistoryScreen()),
         GoRoute(path: '/alerts', builder: (_, _) => const AlertsScreen()),
         GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
+        GoRoute(path: '/server', builder: (_, _) => const ServerScreen()),
       ],
     );
 

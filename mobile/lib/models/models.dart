@@ -41,6 +41,29 @@ class UserProfile {
       };
 }
 
+/// Cleans a server address typed by a helper: trims, adds `http://` when the
+/// scheme is missing, drops trailing slashes. Returns null when the result is
+/// not a usable http(s) URL with a host.
+String? normalizeServerUrl(String input) {
+  var clean = input.trim();
+  if (clean.isEmpty) return null;
+  if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*://').hasMatch(clean)) {
+    clean = 'http://$clean';
+  }
+  final uri = Uri.tryParse(clean);
+  if (uri == null ||
+      (uri.scheme != 'http' && uri.scheme != 'https') ||
+      uri.host.isEmpty ||
+      uri.hasQuery ||
+      uri.hasFragment) {
+    return null;
+  }
+  while (clean.endsWith('/')) {
+    clean = clean.substring(0, clean.length - 1);
+  }
+  return clean;
+}
+
 class AppSettings {
   final String language;
   final bool onboarded;
@@ -55,7 +78,7 @@ class AppSettings {
     this.user,
     this.serverUrl = const String.fromEnvironment(
       'AGRI_API_BASE_URL',
-      defaultValue: 'http://10.0.2.2:8000',
+      defaultValue: '',
     ),
   });
 
@@ -93,8 +116,7 @@ class AppSettings {
             ? null
             : UserProfile.fromJson(Map<String, dynamic>.from(json['user'] as Map)),
         serverUrl: json['serverUrl'] as String? ??
-            const String.fromEnvironment('AGRI_API_BASE_URL',
-                defaultValue: 'http://10.0.2.2:8000'),
+            const String.fromEnvironment('AGRI_API_BASE_URL', defaultValue: ''),
       );
 }
 

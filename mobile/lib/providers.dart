@@ -92,13 +92,22 @@ class AppController extends Notifier<AppState> {
     await _store.saveSettings(settings);
   }
 
-  Future<void> setServerUrl(String url) async {
-    var clean = url.trim();
-    if (clean.endsWith('/')) clean = clean.substring(0, clean.length - 1);
-    if (clean.isEmpty) return;
-    final settings = state.settings.copyWith(serverUrl: clean);
+  /// Points the app at a self-hosted AgriShield backend. Accounts and tokens
+  /// belong to one server, so switching servers clears the old account instead
+  /// of sending its token to a different host; the next request silently
+  /// creates an account on the new server. Returns null on success, or
+  /// 'invalid_url' when the address is not a usable http(s) URL.
+  Future<String?> setServerUrl(String url) async {
+    final clean = normalizeServerUrl(url);
+    if (clean == null) return 'invalid_url';
+    if (clean == state.settings.serverUrl) return null;
+    final settings =
+        state.settings.copyWith(serverUrl: clean, token: '', clearUser: true);
     state = state.copyWith(settings: settings);
     await _store.saveSettings(settings);
+    await _store.clearAccountCredentials();
+    debugPrint('AgriShield: backend server set to $clean, old account cleared');
+    return null;
   }
 
   void showNotice(String? text) {

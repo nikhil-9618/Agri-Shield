@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../core/api_client.dart';
 import '../core/strings.dart';
@@ -240,12 +241,24 @@ class _VoiceScreenState extends ConsumerState<VoiceScreen> {
                 color: AgriColors.warningSoft,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.cloud_off_rounded, color: AgriColors.warning, size: 30),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(_error!, style: const TextStyle(fontSize: 18)),
+                  Row(
+                    children: [
+                      const Icon(Icons.cloud_off_rounded,
+                          color: AgriColors.warning, size: 30),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(_error!, style: const TextStyle(fontSize: 18)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  FilledButton.tonalIcon(
+                    onPressed: () => context.push('/server'),
+                    icon: const Icon(Icons.dns_rounded),
+                    label: Text(L.t(lang, 'serverSetupAction')),
                   ),
                 ],
               ),

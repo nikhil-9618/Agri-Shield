@@ -74,6 +74,11 @@ class AgriDrawer extends ConsumerWidget {
             onTap: () => _go(context, '/profile'),
           ),
           ListTile(
+            leading: const Icon(Icons.dns_rounded, size: 28),
+            title: Text(L.t(lang, 'serverTitle')),
+            onTap: () => _go(context, '/server'),
+          ),
+          ListTile(
             leading: const Icon(Icons.support_agent_rounded, size: 28),
             title: Text(L.t(lang, 'helpTitle')),
             onTap: () => _go(context, '/help'),

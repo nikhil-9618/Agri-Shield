@@ -45,6 +45,14 @@ class LocalStore {
     await _prefs.setString(_kPassword, password);
   }
 
+  /// Forgets the generated account, keeping language, profile and history.
+  /// Used when the app is pointed at a different server, whose accounts are
+  /// unrelated to the old one's.
+  Future<void> clearAccountCredentials() async {
+    await _prefs.remove(_kPhone);
+    await _prefs.remove(_kPassword);
+  }
+
   Future<void> clearAccount() async {
     await _prefs.remove(_kPhone);
     await _prefs.remove(_kPassword);

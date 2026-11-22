@@ -90,11 +90,22 @@ AGRI_API_BASE_URL=https://api.example.org ./scripts/build_apk.sh
 The script uses JDK 17, Flutter stable and Android SDK 36 from
 `~/toolchain` (override with `JAVA_HOME` / `ANDROID_SDK_ROOT`), runs
 `flutter analyze`, builds the release APK, and copies it to
-`artifacts/agrishield-1.0.0-release.apk`.
+`artifacts/agrishield-1.4.4-universal.apk`.
 
-`AGRI_API_BASE_URL` is baked into the build as the default server address. It can
-still be changed at runtime in **Profile → Server address** for testing, but a
-production APK should ship with the real HTTPS URL.
+A release build ships with **no server address baked in**, because the address
+depends on where you host the API. Either set it at build time:
+
+```bash
+AGRI_API_BASE_URL=https://api.example.org ./scripts/build_apk.sh
+```
+
+or leave it out and set it on the phone: **menu → Server → type the address →
+Test server → Use this server**. That screen also clears the old account, since
+accounts exist per server, and signs the phone in silently on the new one.
+
+Serving over plain HTTP is supported (`android:usesCleartextTraffic="true"`) so
+a laptop on the same Wi-Fi works during a pilot. Prefer HTTPS for anything
+beyond that.
 
 ### Signing
 

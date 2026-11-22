@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../core/strings.dart';
 import '../core/theme.dart';
@@ -18,7 +19,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   late final TextEditingController _name;
   late final TextEditingController _village;
-  late final TextEditingController _server;
   late String _language;
   bool _saving = false;
 
@@ -28,7 +28,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final settings = ref.read(appProvider).settings;
     _name = TextEditingController(text: settings.user?.name == 'Farmer' ? '' : settings.user?.name);
     _village = TextEditingController(text: settings.user?.village ?? '');
-    _server = TextEditingController(text: settings.serverUrl);
     _language = settings.language;
   }
 
@@ -36,14 +35,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void dispose() {
     _name.dispose();
     _village.dispose();
-    _server.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     setState(() => _saving = true);
     final notifier = ref.read(appProvider.notifier);
-    await notifier.setServerUrl(_server.text);
     await notifier.saveProfile(
       name: _name.text,
       village: _village.text,
@@ -162,15 +159,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             }).toList(),
           ),
           const SizedBox(height: 22),
-          TextField(
-            controller: _server,
-            keyboardType: TextInputType.url,
-            autocorrect: false,
-            style: const TextStyle(fontSize: 18),
-            decoration: InputDecoration(
-              labelText: L.t(lang, 'serverLabel'),
-              prefixIcon: const Icon(Icons.dns_rounded),
-              border: const OutlineInputBorder(),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.dns_rounded, color: AgriColors.primary, size: 30),
+              title: Text(
+                L.t(lang, 'serverTitle'),
+                style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
+              ),
+              subtitle: Text(
+                state.settings.serverUrl.isEmpty
+                    ? L.t(lang, 'serverNotSet')
+                    : state.settings.serverUrl,
+                style: const TextStyle(fontSize: 15),
+              ),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => context.push('/server'),
             ),
           ),
           const SizedBox(height: 8),

@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../core/strings.dart';
 import '../core/theme.dart';
@@ -286,6 +287,15 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                           onPressed: _load,
                           icon: const Icon(Icons.my_location_rounded),
                           label: Text(L.t(lang, 'allowLocation')),
+                        ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: FilledButton.tonalIcon(
+                          onPressed: () => context.push('/server'),
+                          icon: const Icon(Icons.dns_rounded),
+                          label: Text(L.t(lang, 'serverSetupAction')),
                         ),
                       ),
                   ],

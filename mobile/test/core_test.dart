@@ -76,6 +76,16 @@ void main() {
     expect(restored.localImagePath, '/tmp/leaf.jpg');
   });
 
+  test('a helper-typed server address is normalised or rejected', () {
+    expect(normalizeServerUrl('  https://farm.example.com/  '), 'https://farm.example.com');
+    expect(normalizeServerUrl('192.168.1.5:8000'), 'http://192.168.1.5:8000');
+    expect(normalizeServerUrl('http://10.0.2.2:8000//'), 'http://10.0.2.2:8000');
+    expect(normalizeServerUrl(''), isNull);
+    expect(normalizeServerUrl('   '), isNull);
+    expect(normalizeServerUrl('ftp://farm.example.com'), isNull);
+    expect(normalizeServerUrl('farm.example.com/api?x=1'), isNull);
+  });
+
   test('language keys are canonicalised', () {
     expect(normalizeLang('ta'), 'ta');
     expect(normalizeLang('kn'), 'kn');
