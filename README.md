@@ -345,6 +345,9 @@ AgriShield provides a universal Android APK.
 
 [Download AgriShield Android APK – Version 1.4.3](https://github.com/nikhil-9618/Agri-Shield/releases/download/v1.4.3/agrishield-1.4.3-universal.apk)
 
+Size: 58,902,009 bytes · SHA-256:
+`dba967570c88a71a48efaa4dcc244ba1917cd9c4e807bb8ff284c7e75be4e5e3`
+
 [View All Releases](https://github.com/nikhil-9618/Agri-Shield/releases)
 
 ---
